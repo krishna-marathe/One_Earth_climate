@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimateSphere System Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .url-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .url-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
+        .url-card h4 { margin: 0 0 10px 0; color: #007bff; }
+        .url-card a { color: #007bff; text-decoration: none; font-weight: 500; }
+        .url-card a:hover { text-decoration: underline; }
+        .test-btn { background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #0056b3; }
+        .log { background: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+        .progress { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: #007bff; transition: width 0.3s ease; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 ClimateSphere System Verification</h1>
+        
+        <!-- URL Verification Section -->
+        <div class="section">
+            <h2>📍 Frontend URL Verification</h2>
+            <div class="url-list">
+                <div class="url-card">
+                    <h4>🏠 Landing Page</h4>
+                    <a href="/landing/index.html" target="_blank">/landing/index.html</a>
+                    <button class="test-btn" onclick="testURL('/landing/index.html', 'landing')">Test</button>
+                    <div id="landing-status"></div>
+                </div>
+                
+                <div class="url-card">
+                    <h4>🔐 Login</h4>
+                    <a href="/auth/login.html" target="_blank">/auth/login.html</a>
+                    <button class="test-btn" onclick="testURL('/auth/login.html', 'login')">Test</button>
+                    <div id="login-status"></div>
+                </div>
+                
+                <div class="url-card">
+                    <h4>📝 Signup</h4>
+                    <a href="/auth/signup.html" target="_blank">/auth/signup.html</a>
+                    <button class="test-btn" onclick="testURL('/auth/signup.html', 'signup')">Test</button>
+                    <div id="signup-status"></div>
+                </div>
+                
+                <div class="url-card">
+                    <h4>📊 Dashboard</h4>
+                    <a href="/dashboard/dashboard.html" target="_blank">/dashboard/dashboard.html</a>
+                    <button class="test-btn" onclick="testURL('/dashboard/dashboard.html', 'dashboard')">Test</button>
+                    <div id="dashboard-status"></div>
+                </div>
+                
+                <div class="url-card">
+                    <h4>🔮 Predictions</h4>
+                    <a href="/dashboard/predictions.html" target="_blank">/dashboard/predictions.html</a>
+                    <button class="test-btn" onclick="testURL('/dashboard/predictions.html', 'predictions')">Test</button>
+                    <div id="predictions-status"></div>
+                </div>
+                
+                <div class="url-card">
+                    <h4>📤 Upload</h4>
+                    <a href="/dashboard/upload.html" target="_blank">/dashboard/upload.html</a>
+                    <button class="test-btn" onclick="testURL('/dashboard/upload.html', 'upload')">Test</button>
+                    <div id="upload-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backend API Verification -->
+        <div class="section">
+            <h2>🔌 Backend API Connectivity</h2>
+            <button class="test-btn" onclick="testBackendAPIs()">Test All APIs</button>
+            <div id="api-results"></div>
+        </div>
+
+        <!-- Database Verification -->
+        <div class="section">
+            <h2>🗄️ Database Connectivity</h2>
+            <button class="test-btn" onclick="testDatabase()">Test Database</button>
+            <div id="db-results"></div>
+        </div>
+
+        <!-- Frontend Functionality Tests -->
+        <div class="section">
+            <h2>⚡ Frontend Functionality Tests</h2>
+            <button class="test-btn" onclick="testFrontendFunctionality()">Run All Tests</button>
+            <div class="progress" style="margin: 10px 0;">
+                <div class="progress-bar" id="test-progress" style="width: 0%"></div>
+            </div>
+            <div id="functionality-results"></div>
+        </div>
+
+        <!-- System Status Summary -->
+        <div class="section">
+            <h2>📋 System Status Summary</h2>
+            <div id="status-summary">
+                <div class="info">Click "Run Complete Verification" to test all systems</div>
+            </div>
+            <button class="test-btn" onclick="runCompleteVerification()" style="background: #28a745;">Run Complete Verification</button>
+        </div>
+
+        <!-- Console Log -->
+        <div class="section">
+            <h2>📝 Verification Log</h2>
+            <div class="log" id="console-log">System ready for verification...</div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            frontend: {},
+            backend: {},
+            database: false,
+            functionality: {}
+        };
+
+        function log(message) {
+            const logElement = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        async function testURL(url, key) {
+            log(`Testing URL: ${url}`);
+            const statusElement = document.getElementById(`${key}-status`);
+            
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    statusElement.innerHTML = '<div class="status success">✅ Available</div>';
+                    testResults.frontend[key] = true;
+                    log(`✅ ${url} - OK`);
+                } else {
+                    statusElement.innerHTML = '<div class="status error">❌ Error ' + response.status + '</div>';
+                    testResults.frontend[key] = false;
+                    log(`❌ ${url} - Error ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.innerHTML = '<div class="status error">❌ Failed to load</div>';
+                testResults.frontend[key] = false;
+                log(`❌ ${url} - Failed: ${error.message}`);
+            }
+        }
+
+        async function testBackendAPIs() {
+            log('Testing Backend APIs...');
+            const resultsElement = document.getElementById('api-results');
+            resultsElement.innerHTML = '<div class="info">Testing APIs...</div>';
+            
+            const apis = [
+                { name: 'Auth Login', url: 'http://localhost:3000/api/auth/login', method: 'POST' },
+                { name: 'Auth Signup', url: 'http://localhost:3000/api/auth/signup', method: 'POST' },
+                { name: 'Summary', url: 'http://localhost:3000/api/summary', method: 'GET' },
+                { name: 'Upload', url: 'http://localhost:3000/api/upload', method: 'POST' },
+                { name: 'Predict', url: 'http://localhost:5000/api/predict', method: 'POST' },
+                { name: 'Scenario Save', url: 'http://localhost:3000/api/scenario/save', method: 'POST' }
+            ];
+
+            let results = '';
+            let successCount = 0;
+
+            for (const api of apis) {
+                try {
+                    const response = await fetch(api.url, {
+                        method: api.method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: api.method === 'POST' ? JSON.stringify({}) : undefined
+                    });
+                    
+                    if (response.status < 500) { // Accept 4xx as "reachable"
+                        results += `<div class="status success">✅ ${api.name} - Reachable (${response.status})</div>`;
+                        successCount++;
+                        log(`✅ API ${api.name} - Reachable`);
+                    } else {
+                        results += `<div class="status error">❌ ${api.name} - Server Error (${response.status})</div>`;
+                        log(`❌ API ${api.name} - Server Error`);
+                    }
+                } catch (error) {
+                    results += `<div class="status error">❌ ${api.name} - Offline</div>`;
+                    log(`❌ API ${api.name} - Offline: ${error.message}`);
+                }
+            }
+
+            testResults.backend.connectivity = successCount > 0;
+            testResults.backend.count = successCount;
+            resultsElement.innerHTML = results;
+        }
+
+        async function testDatabase() {
+            log('Testing Database connectivity...');
+            const resultsElement = document.getElementById('db-results');
+            resultsElement.innerHTML = '<div class="info">Testing database...</div>';
+            
+            try {
+                // Test database through backend health endpoint
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                
+                if (data.database) {
+                    resultsElement.innerHTML = '<div class="status success">✅ Database Connected (MongoDB)</div>';
+                    testResults.database = true;
+                    log('✅ Database - Connected');
+                } else {
+                    resultsElement.innerHTML = '<div class="status warning">⚠️ Database status unknown</div>';
+                    testResults.database = false;
+                    log('⚠️ Database - Status unknown');
+                }
+            } catch (error) {
+                resultsElement.innerHTML = '<div class="status error">❌ Cannot reach database endpoint</div>';
+                testResults.database = false;
+                log(`❌ Database - Cannot reach: ${error.message}`);
+            }
+        }
+
+        async function testFrontendFunctionality() {
+            log('Testing Frontend functionality...');
+            const resultsElement = document.getElementById('functionality-results');
+            const progressBar = document.getElementById('test-progress');
+            
+            const tests = [
+                { name: 'Interactive Map', test: testInteractiveMap },
+                { name: 'Region Drawer', test: testRegionDrawer },
+                { name: 'Dashboard Panels', test: testDashboardPanels },
+                { name: 'File Upload', test: testFileUpload },
+                { name: 'Predictions', test: testPredictions }
+            ];
+
+            let results = '';
+            let progress = 0;
+
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                log(`Testing: ${test.name}`);
+                
+                try {
+                    const result = await test.test();
+                    if (result) {
+                        results += `<div class="status success">✅ ${test.name}</div>`;
+                        testResults.functionality[test.name] = true;
+                    } else {
+                        results += `<div class="status error">❌ ${test.name}</div>`;
+                        testResults.functionality[test.name] = false;
+                    }
+                } catch (error) {
+                    results += `<div class="status error">❌ ${test.name} - Error: ${error.message}</div>`;
+                    testResults.functionality[test.name] = false;
+                }
+
+                progress = ((i + 1) / tests.length) * 100;
+                progressBar.style.width = progress + '%';
+            }
+
+            resultsElement.innerHTML = results;
+        }
+
+        // Individual test functions
+        async function testInteractiveMap() {
+            // Check if Leaflet is loaded and map exists
+            return typeof L !== 'undefined' && window.map !== undefined;
+        }
+
+        async function testRegionDrawer() {
+            // Check if region drawer elements exist
+            return document.getElementById('regionDrawer') !== null;
+        }
+
+        async function testDashboardPanels() {
+            // Check if dashboard sections exist
+            const sections = ['overview-section', 'upload-section', 'predictions-section'];
+            return sections.every(id => document.getElementById(id) !== null);
+        }
+
+        async function testFileUpload() {
+            // Check if file upload elements exist
+            return document.getElementById('fileInput') !== null;
+        }
+
+        async function testPredictions() {
+            // Check if Chart.js is loaded
+            return typeof Chart !== 'undefined';
+        }
+
+        async function runCompleteVerification() {
+            log('🚀 Starting Complete System Verification...');
+            
+            // Test all URLs
+            const urls = ['landing', 'login', 'signup', 'dashboard', 'predictions', 'upload'];
+            for (const url of urls) {
+                await testURL(`/${url === 'landing' ? 'landing' : url === 'login' || url === 'signup' ? 'auth' : 'dashboard'}/${url}.html`, url);
+            }
+
+            // Test backend APIs
+            await testBackendAPIs();
+
+            // Test database
+            await testDatabase();
+
+            // Test frontend functionality
+            await testFrontendFunctionality();
+
+            // Generate summary
+            updateStatusSummary();
+            
+            log('✅ Complete verification finished!');
+        }
+
+        function updateStatusSummary() {
+            const summaryElement = document.getElementById('status-summary');
+            
+            const frontendCount = Object.values(testResults.frontend).filter(Boolean).length;
+            const frontendTotal = Object.keys(testResults.frontend).length;
+            const backendConnected = testResults.backend.connectivity;
+            const dbConnected = testResults.database;
+            const functionalityCount = Object.values(testResults.functionality).filter(Boolean).length;
+            const functionalityTotal = Object.keys(testResults.functionality).length;
+
+            let summary = `
+                <div class="status ${frontendCount === frontendTotal ? 'success' : 'warning'}">
+                    Frontend routing: ${frontendCount}/${frontendTotal} ✅
+                </div>
+                <div class="status ${backendConnected ? 'success' : 'error'}">
+                    Backend API connectivity: ${backendConnected ? '✅' : '❌'}
+                </div>
+                <div class="status ${dbConnected ? 'success' : 'error'}">
+                    Database connectivity: ${dbConnected ? '✅' : '❌'}
+                </div>
+                <div class="status ${functionalityCount === functionalityTotal ? 'success' : 'warning'}">
+                    Frontend functionality: ${functionalityCount}/${functionalityTotal} ✅
+                </div>
+            `;
+
+            summaryElement.innerHTML = summary;
+
+            // Console summary
+            console.log('=== CLIMATOSPHERE VERIFICATION SUMMARY ===');
+            console.log(`Frontend routing: ${frontendCount === frontendTotal ? '✅' : '❌'}`);
+            console.log(`Backend API connectivity: ${backendConnected ? '✅' : '❌'}`);
+            console.log(`Database connectivity: ${dbConnected ? '✅' : '❌'}`);
+            console.log(`Frontend functionality: ${functionalityCount === functionalityTotal ? '✅' : '❌'}`);
+            console.log('==========================================');
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            log('ClimateSphere Verification System loaded');
+            log('Click "Run Complete Verification" to test all systems');
+        });
+    </script>
+</body>
+</html>

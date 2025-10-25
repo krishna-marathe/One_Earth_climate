@@ -1,0 +1,242 @@
+{
+  "mumbai": {
+    "temperature": 29.98859903381642,
+    "rainfall": 182.96946859903377,
+    "humidity": 74.96719806763286,
+    "co2_level": 433.5759903381643,
+    "flood_events": 80,
+    "drought_events": 0,
+    "heatwave_events": 4,
+    "total_records": 207
+  },
+  "delhi": {
+    "temperature": 32.92643902439024,
+    "rainfall": 101.29063414634147,
+    "humidity": 60.549707317073164,
+    "co2_level": 463.2484390243902,
+    "flood_events": 57,
+    "drought_events": 7,
+    "heatwave_events": 11,
+    "total_records": 205
+  },
+  "kolkata": {
+    "temperature": 30.226788990825685,
+    "rainfall": 197.918623853211,
+    "humidity": 79.6611009174312,
+    "co2_level": 444.1187155963303,
+    "flood_events": 97,
+    "drought_events": 1,
+    "heatwave_events": 9,
+    "total_records": 218
+  },
+  "gujarat": {
+    "temperature": 35.489687499999995,
+    "rainfall": 62.15580357142857,
+    "humidity": 55.089598214285715,
+    "co2_level": 453.9171875,
+    "flood_events": 14,
+    "drought_events": 28,
+    "heatwave_events": 38,
+    "total_records": 224
+  },
+  "chennai": {
+    "temperature": 32.282871287128714,
+    "rainfall": 142.99767326732672,
+    "humidity": 77.8050495049505,
+    "co2_level": 439.19599009900986,
+    "flood_events": 65,
+    "drought_events": 3,
+    "heatwave_events": 16,
+    "total_records": 202
+  },
+  "kashmir": {
+    "temperature": 18.982615384615386,
+    "rainfall": 252.52379487179488,
+    "humidity": 64.68317948717949,
+    "co2_level": 392.40374358974367,
+    "flood_events": 112,
+    "drought_events": 0,
+    "heatwave_events": 2,
+    "total_records": 195
+  },
+  "california": {
+    "temperature": 22.550353535353533,
+    "rainfall": 82.17434343434344,
+    "humidity": 60.0819696969697,
+    "co2_level": 422.87964646464656,
+    "flood_events": 3,
+    "drought_events": 1,
+    "heatwave_events": 1,
+    "total_records": 198
+  },
+  "texas": {
+    "temperature": 28.670875576036867,
+    "rainfall": 76.61368663594469,
+    "humidity": 64.57645161290323,
+    "co2_level": 427.8315668202766,
+    "flood_events": 1,
+    "drought_events": 2,
+    "heatwave_events": 2,
+    "total_records": 217
+  },
+  "florida": {
+    "temperature": 26.156666666666666,
+    "rainfall": 124.9815,
+    "humidity": 79.83516666666667,
+    "co2_level": 418.38422222222226,
+    "flood_events": 63,
+    "drought_events": 1,
+    "heatwave_events": 2,
+    "total_records": 180
+  },
+  "newyork": {
+    "temperature": 15.79487922705314,
+    "rainfall": 119.29487922705313,
+    "humidity": 69.23579710144928,
+    "co2_level": 412.63951690821256,
+    "flood_events": 23,
+    "drought_events": 1,
+    "heatwave_events": 2,
+    "total_records": 207
+  },
+  "beijing": {
+    "temperature": 14.244797979797982,
+    "rainfall": 58.20929292929293,
+    "humidity": 54.7769191919192,
+    "co2_level": 493.40191919191926,
+    "flood_events": 2,
+    "drought_events": 7,
+    "heatwave_events": 0,
+    "total_records": 198
+  },
+  "shanghai": {
+    "temperature": 18.474651162790696,
+    "rainfall": 119.46167441860464,
+    "humidity": 74.81697674418605,
+    "co2_level": 482.7626511627907,
+    "flood_events": 37,
+    "drought_events": 1,
+    "heatwave_events": 2,
+    "total_records": 215
+  },
+  "guangzhou": {
+    "temperature": 25.056130434782613,
+    "rainfall": 169.0662173913044,
+    "humidity": 79.61078260869563,
+    "co2_level": 474.9175652173913,
+    "flood_events": 119,
+    "drought_events": 0,
+    "heatwave_events": 3,
+    "total_records": 230
+  },
+  "london": {
+    "temperature": 12.634129353233831,
+    "rainfall": 147.62781094527364,
+    "humidity": 75.42512437810946,
+    "co2_level": 403.26955223880594,
+    "flood_events": 71,
+    "drought_events": 1,
+    "heatwave_events": 1,
+    "total_records": 201
+  },
+  "manchester": {
+    "temperature": 10.635094339622643,
+    "rainfall": 172.6111320754717,
+    "humidity": 79.89353773584905,
+    "co2_level": 399.0255188679245,
+    "flood_events": 100,
+    "drought_events": 1,
+    "heatwave_events": 0,
+    "total_records": 212
+  },
+  "edinburgh": {
+    "temperature": 9.499537037037037,
+    "rainfall": 157.46537037037038,
+    "humidity": 78.66708333333332,
+    "co2_level": 392.71259259259256,
+    "flood_events": 86,
+    "drought_events": 0,
+    "heatwave_events": 0,
+    "total_records": 216
+  },
+  "dubai": {
+    "temperature": 39.382889908256885,
+    "rainfall": 18.68912844036697,
+    "humidity": 45.179678899082575,
+    "co2_level": 462.07279816513767,
+    "flood_events": 0,
+    "drought_events": 143,
+    "heatwave_events": 88,
+    "total_records": 218
+  },
+  "abudhabi": {
+    "temperature": 37.621386138613865,
+    "rainfall": 15.491633663366336,
+    "humidity": 49.76574257425743,
+    "co2_level": 457.62297029702967,
+    "flood_events": 2,
+    "drought_events": 142,
+    "heatwave_events": 61,
+    "total_records": 202
+  },
+  "karachi": {
+    "temperature": 30.96380090497738,
+    "rainfall": 38.530497737556566,
+    "humidity": 69.65592760180995,
+    "co2_level": 447.24950226244346,
+    "flood_events": 3,
+    "drought_events": 24,
+    "heatwave_events": 4,
+    "total_records": 221
+  },
+  "lahore": {
+    "temperature": 28.996894736842105,
+    "rainfall": 57.03052631578947,
+    "humidity": 65.27968421052631,
+    "co2_level": 453.8944736842106,
+    "flood_events": 0,
+    "drought_events": 4,
+    "heatwave_events": 0,
+    "total_records": 190
+  },
+  "islamabad": {
+    "temperature": 25.394977375565613,
+    "rainfall": 86.32221719457013,
+    "humidity": 59.62226244343891,
+    "co2_level": 437.79561085972847,
+    "flood_events": 6,
+    "drought_events": 0,
+    "heatwave_events": 1,
+    "total_records": 221
+  },
+  "moscow": {
+    "temperature": 8.006748768472907,
+    "rainfall": 88.17812807881774,
+    "humidity": 69.82423645320196,
+    "co2_level": 431.3871428571429,
+    "flood_events": 2,
+    "drought_events": 1,
+    "heatwave_events": 1,
+    "total_records": 203
+  },
+  "stpetersburg": {
+    "temperature": 6.369205607476634,
+    "rainfall": 93.92934579439252,
+    "humidity": 74.77079439252336,
+    "co2_level": 428.5750467289719,
+    "flood_events": 3,
+    "drought_events": 1,
+    "heatwave_events": 0,
+    "total_records": 214
+  },
+  "novosibirsk": {
+    "temperature": 2.3385922330097086,
+    "rainfall": 68.27281553398059,
+    "humidity": 64.23058252427184,
+    "co2_level": 423.2102427184466,
+    "flood_events": 2,
+    "drought_events": 2,
+    "heatwave_events": 0,
+    "total_records": 206
+  }
+}

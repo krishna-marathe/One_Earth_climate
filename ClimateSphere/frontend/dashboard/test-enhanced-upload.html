@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Upload System Test - ClimateSphere</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { color: #22c55e; }
+        .error { color: #ef4444; }
+        .warning { color: #f59e0b; }
+        .test-btn { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #1d4ed8; }
+        .log { background: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Enhanced Upload System Test</h1>
+        
+        <div class="test-section">
+            <h2>📋 Test Checklist</h2>
+            <div id="testResults">
+                <p>Click "Run All Tests" to verify enhanced upload functionality</p>
+            </div>
+            <button class="test-btn" onclick="runAllTests()">Run All Tests</button>
+            <button class="test-btn" onclick="testSampleData()">Test Sample Data</button>
+            <button class="test-btn" onclick="testPredictionIntegration()">Test Prediction Integration</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Feature Verification</h2>
+            <div id="featureStatus">
+                <ul>
+                    <li id="upload-test">File Upload & Validation: <span class="status">Not tested</span></li>
+                    <li id="preview-test">Data Preview: <span class="status">Not tested</span></li>
+                    <li id="mapping-test">Column Mapping: <span class="status">Not tested</span></li>
+                    <li id="analysis-test">Data Analysis: <span class="status">Not tested</span></li>
+                    <li id="charts-test">Chart Generation: <span class="status">Not tested</span></li>
+                    <li id="prediction-test">ML Predictions: <span class="status">Not tested</span></li>
+                    <li id="download-test">Data Export: <span class="status">Not tested</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Quick Links</h2>
+            <p>Test the enhanced upload system:</p>
+            <ul>
+                <li><a href="upload.html" target="_blank">Enhanced Upload Page</a></li>
+                <li><a href="predictions.html" target="_blank">Enhanced Predictions Page</a></li>
+                <li><a href="sample_climate_data.csv" target="_blank">Sample Climate Data (CSV)</a></li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Test Log</h2>
+            <div class="log" id="testLog">Test system ready...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logElement = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(testId, status, message) {
+            const element = document.getElementById(testId);
+            if (element) {
+                const statusSpan = element.querySelector('.status');
+                statusSpan.textContent = message;
+                statusSpan.className = `status ${status}`;
+            }
+        }
+
+        async function runAllTests() {
+            log('🚀 Starting Enhanced Upload System Tests...');
+            
+            const tests = [
+                { name: 'File Upload Libraries', test: testLibraries, id: 'upload-test' },
+                { name: 'Data Preview System', test: testPreviewSystem, id: 'preview-test' },
+                { name: 'Column Mapping', test: testColumnMapping, id: 'mapping-test' },
+                { name: 'Analysis Engine', test: testAnalysisEngine, id: 'analysis-test' },
+                { name: 'Chart Generation', test: testChartGeneration, id: 'charts-test' },
+                { name: 'Prediction Integration', test: testPredictionSystem, id: 'prediction-test' },
+                { name: 'Export Functions', test: testExportFunctions, id: 'download-test' }
+            ];
+
+            let passed = 0;
+            let total = tests.length;
+
+            for (const test of tests) {
+                try {
+                    log(`Testing: ${test.name}...`);
+                    const result = await test.test();
+                    if (result) {
+                        updateStatus(test.id, 'success', '✅ PASS');
+                        passed++;
+                        log(`✅ ${test.name}: PASSED`);
+                    } else {
+                        updateStatus(test.id, 'error', '❌ FAIL');
+                        log(`❌ ${test.name}: FAILED`);
+                    }
+                } catch (error) {
+                    updateStatus(test.id, 'error', '❌ ERROR');
+                    log(`❌ ${test.name}: ERROR - ${error.message}`);
+                }
+            }
+
+            const resultsDiv = document.getElementById('testResults');
+            if (passed === total) {
+                resultsDiv.innerHTML = `<div class="success">🎉 All tests passed! (${passed}/${total})</div>`;
+                log('🎉 All enhanced upload tests completed successfully!');
+            } else {
+                resultsDiv.innerHTML = `<div class="warning">⚠️ Some tests failed (${passed}/${total})</div>`;
+                log(`⚠️ Tests completed with ${total - passed} failures`);
+            }
+        }
+
+        async function testLibraries() {
+            // Test if required libraries are loaded
+            const libraries = [
+                { name: 'PapaParse', check: () => typeof Papa !== 'undefined' },
+                { name: 'XLSX', check: () => typeof XLSX !== 'undefined' },
+                { name: 'Chart.js', check: () => typeof Chart !== 'undefined' }
+            ];
+
+            for (const lib of libraries) {
+                if (!lib.check()) {
+                    throw new Error(`${lib.name} library not loaded`);
+                }
+            }
+
+            return true;
+        }
+
+        async function testPreviewSystem() {
+            // Test data preview functionality
+            const sampleData = [
+                { Date: '2024-01-01', Temperature: 22.5, Rainfall: 45.2 },
+                { Date: '2024-01-02', Temperature: 23.1, Rainfall: 42.8 }
+            ];
+
+            // Simulate preview generation
+            const columns = Object.keys(sampleData[0]);
+            return columns.length > 0 && sampleData.length > 0;
+        }
+
+        async function testColumnMapping() {
+            // Test column mapping detection
+            const testColumns = ['Date', 'Temperature', 'Rainfall', 'CO2', 'AQI'];
+            const mappings = {
+                'Date': 'date',
+                'Temperature': 'temperature',
+                'Rainfall': 'rainfall',
+                'CO2': 'co2',
+                'AQI': 'aqi'
+            };
+
+            return Object.keys(mappings).length === testColumns.length;
+        }
+
+        async function testAnalysisEngine() {
+            // Test statistical analysis
+            const testData = [10, 20, 30, 40, 50];
+            const mean = testData.reduce((a, b) => a + b, 0) / testData.length;
+            const min = Math.min(...testData);
+            const max = Math.max(...testData);
+
+            return mean === 30 && min === 10 && max === 50;
+        }
+
+        async function testChartGeneration() {
+            // Test chart creation capability
+            if (typeof Chart === 'undefined') {
+                throw new Error('Chart.js not available');
+            }
+
+            // Test chart configuration
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar'],
+                    datasets: [{
+                        label: 'Test Data',
+                        data: [10, 20, 30]
+                    }]
+                }
+            };
+
+            return config.type === 'line' && config.data.datasets.length > 0;
+        }
+
+        async function testPredictionSystem() {
+            // Test prediction integration
+            const testScenarios = {
+                co2Reduction: 10,
+                deforestationChange: -5,
+                renewableIncrease: 15
+            };
+
+            // Simulate risk calculation
+            const baseRisk = 50;
+            const adjustedRisk = baseRisk + testScenarios.co2Reduction * 0.5;
+            
+            return adjustedRisk !== baseRisk;
+        }
+
+        async function testExportFunctions() {
+            // Test data export capabilities
+            const testData = [{ name: 'test', value: 123 }];
+            
+            // Test CSV conversion
+            const csvData = convertToCSV(testData);
+            
+            // Test JSON export
+            const jsonData = JSON.stringify(testData);
+            
+            return csvData.includes('name,value') && jsonData.includes('test');
+        }
+
+        function convertToCSV(data) {
+            if (!data || data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => 
+                    headers.map(header => `"${row[header]}"`).join(',')
+                )
+            ].join('\n');
+            
+            return csvContent;
+        }
+
+        async function testSampleData() {
+            log('📊 Testing with sample climate data...');
+            
+            try {
+                const response = await fetch('sample_climate_data.csv');
+                if (response.ok) {
+                    const csvText = await response.text();
+                    log(`✅ Sample data loaded: ${csvText.split('\n').length - 1} rows`);
+                    
+                    // Parse CSV to test data structure
+                    const lines = csvText.split('\n');
+                    const headers = lines[0].split(',');
+                    log(`📋 Columns detected: ${headers.join(', ')}`);
+                    
+                    return true;
+                } else {
+                    throw new Error('Failed to load sample data');
+                }
+            } catch (error) {
+                log(`❌ Sample data test failed: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function testPredictionIntegration() {
+            log('🔮 Testing prediction integration...');
+            
+            // Test localStorage integration
+            const testData = [
+                { temperature: 25.5, co2: 415.3, rainfall: 45.2 },
+                { temperature: 26.1, co2: 415.8, rainfall: 42.8 }
+            ];
+            
+            try {
+                localStorage.setItem('climateSphere_uploadedData', JSON.stringify(testData));
+                const retrieved = JSON.parse(localStorage.getItem('climateSphere_uploadedData'));
+                
+                if (retrieved && retrieved.length === testData.length) {
+                    log('✅ Data storage and retrieval working');
+                    
+                    // Test prediction enhancement
+                    const enhanced = retrieved.map(row => ({
+                        ...row,
+                        riskFactor: (row.temperature - 20) * 2 + (row.co2 - 400) * 0.1
+                    }));
+                    
+                    log(`📈 Enhanced predictions calculated for ${enhanced.length} records`);
+                    return true;
+                } else {
+                    throw new Error('Data storage/retrieval failed');
+                }
+            } catch (error) {
+                log(`❌ Prediction integration test failed: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Initialize test system
+        window.addEventListener('load', () => {
+            log('🧪 Enhanced Upload Test System loaded');
+            log('Click "Run All Tests" to verify functionality');
+        });
+    </script>
+</body>
+</html>

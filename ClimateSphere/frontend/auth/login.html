@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ClimateSphere</title>
+    <meta name="description" content="Login to ClimateSphere climate intelligence platform">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css">
+    
+    <!-- Auth Styles -->
+    <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="auth-header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <i class="fas fa-globe-americas"></i>
+                <span>ClimateSphere</span>
+            </div>
+            <a href="../landing/index.html" class="btn btn-outline">Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header-content">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your ClimateSphere account</p>
+                </div>
+
+                <!-- Demo Mode Banner -->
+                <div id="demoBanner" class="alert alert-info d-none">
+                    <i class="fas fa-info-circle"></i>
+                    Running in demo mode - backend not available
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="Enter your email"
+                            required
+                            autocomplete="email"
+                        >
+                        <div id="emailError" class="form-error d-none"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="password-input-container">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordError" class="form-error d-none"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-large" id="loginBtn">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loading d-none">
+                            <span class="loading-spinner"></span>
+                            Signing in...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Forgot Password -->
+                <div class="auth-links">
+                    <a href="#" class="forgot-password">Forgot your password?</a>
+                </div>
+
+                <!-- Social Login -->
+                <div class="social-login">
+                    <div class="divider">
+                        <span>Or continue with</span>
+                    </div>
+                    
+                    <div class="social-buttons">
+                        <button class="btn btn-outline social-btn" id="googleLogin">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                        <button class="btn btn-outline social-btn" id="githubLogin">
+                            <i class="fab fa-github"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sign Up Link -->
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+                </div>
+            </div>
+
+            <!-- Demo Instructions -->
+            <div class="demo-instructions">
+                <h3>Demo Mode</h3>
+                <p>To test the application without a backend:</p>
+                <ul>
+                    <li>Use any email format (e.g., demo@test.com)</li>
+                    <li>Use any password (minimum 8 characters)</li>
+                    <li>Click "Sign In" to access demo dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+    
+    <!-- Auth Scripts -->
+    <script src="assets/js/auth.js"></script>
+</body>
+</html>

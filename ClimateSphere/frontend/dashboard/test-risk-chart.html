@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Chart Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .chart-container {
+            width: 600px;
+            height: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+        .test-buttons {
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #3b82f6;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .status {
+            text-align: center;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background: #dcfce7; color: #16a34a; }
+        .error { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <h1>Risk Chart Test Page</h1>
+    
+    <div class="test-buttons">
+        <button onclick="createChart()">Create Chart</button>
+        <button onclick="updateChart()">Update Chart</button>
+        <button onclick="testMLAPI()">Test ML API</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="chart-container">
+        <canvas id="testRiskChart"></canvas>
+    </div>
+
+    <script>
+        let testChart = null;
+        
+        function showStatus(message, type = 'success') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            console.log(message);
+        }
+        
+        function createChart() {
+            const canvas = document.getElementById('testRiskChart');
+            if (!canvas) {
+                showStatus('Canvas not found!', 'error');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            
+            if (testChart) {
+                testChart.destroy();
+            }
+            
+            testChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Flood Risk', 'Drought Risk', 'Heatwave Risk'],
+                    datasets: [{
+                        label: 'Risk Probability (%)',
+                        data: [30, 25, 35],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Climate Risk Assessment Test'
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            title: { display: true, text: 'Probability (%)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            title: { display: true, text: 'Risk Types' }
+                        }
+                    }
+                }
+            });
+            
+            showStatus('Chart created successfully!');
+        }
+        
+        function updateChart() {
+            if (!testChart) {
+                showStatus('Chart not created yet!', 'error');
+                return;
+            }
+            
+            const newData = [
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100),
+                Math.floor(Math.random() * 100)
+            ];
+            
+            testChart.data.datasets[0].data = newData;
+            testChart.update();
+            
+            showStatus(`Chart updated with values: ${newData.join(', ')}`);
+        }
+        
+        async function testMLAPI() {
+            try {
+                showStatus('Testing ML API...');
+                
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        temperature: 30,
+                        rainfall: 80,
+                        humidity: 65,
+                        co2_level: 430
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const risks = {
+                    flood: (data.predictions.flood.risk_probability * 100),
+                    drought: (data.predictions.drought.risk_probability * 100),
+                    heatwave: (data.predictions.heatwave.risk_probability * 100)
+                };
+                
+                if (testChart) {
+                    testChart.data.datasets[0].data = [
+                        Math.round(risks.flood),
+                        Math.round(risks.drought),
+                        Math.round(risks.heatwave)
+                    ];
+                    testChart.update();
+                }
+                
+                showStatus(`ML API working! Risks: Flood ${risks.flood.toFixed(1)}%, Drought ${risks.drought.toFixed(1)}%, Heatwave ${risks.heatwave.toFixed(1)}%`);
+                
+            } catch (error) {
+                showStatus(`ML API error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-create chart on load
+        window.addEventListener('load', () => {
+            setTimeout(createChart, 500);
+        });
+    </script>
+</body>
+</html>

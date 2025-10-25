@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Analysis - ClimateSphere</title>
+    
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../shared/common.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .main-content {
+            padding: var(--spacing-xl);
+            min-height: calc(100vh - 80px);
+        }
+        
+        .analysis-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .analysis-header h1 {
+            font-size: var(--font-size-3xl);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .analysis-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .card-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-sm);
+            opacity: 0.9;
+        }
+        
+        .controls-panel {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-control {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-secondary);
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+            margin-right: var(--spacing-sm);
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/landing/index.html" class="navbar-brand">
+                <i class="fas fa-globe-americas"></i>
+                ClimateSphere
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="/landing/index.html" class="nav-link">Home</a></li>
+                <li><a href="/auth/login.html" class="nav-link">Login</a></li>
+                <li><a href="/dashboard/dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="/dashboard/predictions.html" class="nav-link">Predictions</a></li>
+                <li><a href="/dashboard/insights.html" class="nav-link">Insights</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="analysis-header">
+                <h1><i class="fas fa-chart-line"></i> Climate Data Analysis</h1>
+                <p>Comprehensive analysis of climate patterns and trends</p>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <h3><i class="fas fa-sliders-h"></i> Analysis Controls</h3>
+                <div class="controls-grid">
+                    <div class="form-group">
+                        <label class="form-label">Time Period</label>
+                        <select class="form-control" id="timePeriod">
+                            <option value="1year">Last 1 Year</option>
+                            <option value="5years">Last 5 Years</option>
+                            <option value="10years">Last 10 Years</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Region</label>
+                        <select class="form-control" id="regionSelect">
+                            <option value="global">Global</option>
+                            <option value="north-america">North America</option>
+                            <option value="europe">Europe</option>
+                            <option value="asia">Asia</option>
+                            <option value="custom">Custom Region</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Analysis Type</label>
+                        <select class="form-control" id="analysisType">
+                            <option value="trends">Trend Analysis</option>
+                            <option value="seasonal">Seasonal Patterns</option>
+                            <option value="correlation">Correlation Analysis</option>
+                            <option value="anomaly">Anomaly Detection</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" id="runAnalysis">
+                            <i class="fas fa-play"></i>
+                            Run Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Overview -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Statistics will be populated by JavaScript -->
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="analysis-grid" id="analysisGrid">
+                <!-- Analysis charts will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Shared JavaScript -->
+    <script src="../shared/api.js"></script>
+    <script src="../shared/utils.js"></script>
+    <script src="../shared/ai_chat.js"></script>
+
+    <script>
+        // Analysis page functionality
+        class ClimateAnalysis {
+            constructor() {
+                this.charts = {};
+                this.currentData = null;
+                this.initializeEventListeners();
+                this.loadInitialData();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('runAnalysis').addEventListener('click', () => {
+                    this.runAnalysis();
+                });
+
+                // Auto-update when controls change
+                ['timePeriod', 'regionSelect', 'analysisType'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => {
+                        this.runAnalysis();
+                    });
+                });
+            }
+
+            async loadInitialData() {
+                try {
+                    // TODO: Replace with actual API call
+                    const response = await window.ClimateSphereAPI.getAnalysis('default');
+                    
+                    if (response.demo) {
+                        // Use demo data for development
+                        this.currentData = this.generateDemoData();
+                    } else {
+                        this.currentData = response.data;
+                    }
+                    
+                    this.updateStatistics();
+                    this.runAnalysis();
+                    
+                } catch (error) {
+                    console.error('Failed to load initial data:', error);
+                    ClimateSphereUtils.showNotification('Failed to load analysis data', 'error');
+                    
+                    // Use demo data as fallback
+                    this.currentData = this.generateDemoData();
+                    this.updateStatistics();
+                    this.runAnalysis();
+                }
+            }
+
+            generateDemoData() {
+                // Generate demo climate data for analysis
+                const data = [];
+                const startDate = new Date('2020-01-01');
+                
+                for (let i = 0; i < 365 * 4; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + i);
+                    
+                    data.push({
+                        date: date.toISOString().split('T')[0],
+                        temperature: 15 + 10 * Math.sin((i / 365) * 2 * Math.PI) + Math.random() * 5,
+                        rainfall: Math.max(0, 50 + 30 * Math.sin((i / 365) * 2 * Math.PI + Math.PI/2) + Math.random() * 20),
+                        humidity: 40 + 20 * Math.sin((i / 365) * 2 * Math.PI + Math.PI/4) + Math.random() * 10,
+                        co2: 410 + i * 0.01 + Math.random() * 5
+                    });
+                }
+                
+                return data;
+            }
+
+            updateStatistics() {
+                if (!this.currentData) return;
+
+                const temps = this.currentData.map(d => d.temperature).filter(t => !isNaN(t));
+                const rainfall = this.currentData.map(d => d.rainfall).filter(r => !isNaN(r));
+                const co2 = this.currentData.map(d => d.co2).filter(c => !isNaN(c));
+
+                const stats = [
+                    {
+                        value: temps.length.toLocaleString(),
+                        label: 'Data Points',
+                        icon: 'fas fa-database'
+                    },
+                    {
+                        value: ClimateSphereUtils.formatNumber(temps.reduce((a, b) => a + b, 0) / temps.length, '°C', 1),
+                        label: 'Avg Temperature',
+                        icon: 'fas fa-thermometer-half'
+                    },
+                    {
+                        value: ClimateSphereUtils.formatNumber(rainfall.reduce((a, b) => a + b, 0), 'mm', 0),
+                        label: 'Total Rainfall',
+                        icon: 'fas fa-cloud-rain'
+                    },
+                    {
+                        value: ClimateSphereUtils.formatNumber(co2[co2.length - 1], 'ppm', 1),
+                        label: 'Latest CO2',
+                        icon: 'fas fa-smog'
+                    }
+                ];
+
+                const statsGrid = document.getElementById('statsGrid');
+                statsGrid.innerHTML = stats.map(stat => `
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            <i class="${stat.icon}"></i>
+                            ${stat.value}
+                        </div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                `).join('');
+            }
+
+            async runAnalysis() {
+                const analysisGrid = document.getElementById('analysisGrid');
+                
+                // Show loading state
+                analysisGrid.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner loading-spinner"></i>
+                            Running analysis...
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    // Get current settings
+                    const timePeriod = document.getElementById('timePeriod').value;
+                    const region = document.getElementById('regionSelect').value;
+                    const analysisType = document.getElementById('analysisType').value;
+
+                    // TODO: Replace with actual API call
+                    const analysisParams = { timePeriod, region, analysisType };
+                    
+                    // Simulate analysis delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Generate analysis results
+                    this.displayAnalysisResults(analysisType);
+                    
+                    ClimateSphereUtils.showNotification('Analysis completed successfully', 'success');
+                    
+                } catch (error) {
+                    console.error('Analysis failed:', error);
+                    ClimateSphereUtils.showNotification('Analysis failed', 'error');
+                    
+                    analysisGrid.innerHTML = `
+                        <div class="analysis-card">
+                            <div class="loading-state">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Analysis failed. Please try again.
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            displayAnalysisResults(analysisType) {
+                const analysisGrid = document.getElementById('analysisGrid');
+                
+                // Clear existing charts
+                Object.values(this.charts).forEach(chart => {
+                    if (chart && typeof chart.destroy === 'function') {
+                        chart.destroy();
+                    }
+                });
+                this.charts = {};
+
+                // Create analysis-specific visualizations
+                switch (analysisType) {
+                    case 'trends':
+                        this.createTrendAnalysis();
+                        break;
+                    case 'seasonal':
+                        this.createSeasonalAnalysis();
+                        break;
+                    case 'correlation':
+                        this.createCorrelationAnalysis();
+                        break;
+                    case 'anomaly':
+                        this.createAnomalyAnalysis();
+                        break;
+                    default:
+                        this.createTrendAnalysis();
+                }
+            }
+
+            createTrendAnalysis() {
+                const analysisGrid = document.getElementById('analysisGrid');
+                analysisGrid.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3 class="card-title">Temperature Trends</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="tempTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <i class="fas fa-cloud-rain"></i>
+                            <h3 class="card-title">Rainfall Trends</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="rainfallTrendChart"></canvas>
+                        </div>
+                    </div>
+                `;
+
+                // Create temperature trend chart
+                this.createChart('tempTrendChart', 'line', 'temperature', 'Temperature (°C)');
+                
+                // Create rainfall trend chart
+                this.createChart('rainfallTrendChart', 'bar', 'rainfall', 'Rainfall (mm)');
+            }
+
+            createSeasonalAnalysis() {
+                // TODO: Implement seasonal analysis charts
+                const analysisGrid = document.getElementById('analysisGrid');
+                analysisGrid.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3 class="card-title">Seasonal Patterns</h3>
+                        </div>
+                        <div class="loading-state">
+                            <i class="fas fa-info-circle"></i>
+                            Seasonal analysis coming soon...
+                        </div>
+                    </div>
+                `;
+            }
+
+            createCorrelationAnalysis() {
+                // TODO: Implement correlation analysis
+                const analysisGrid = document.getElementById('analysisGrid');
+                analysisGrid.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <i class="fas fa-project-diagram"></i>
+                            <h3 class="card-title">Variable Correlations</h3>
+                        </div>
+                        <div class="loading-state">
+                            <i class="fas fa-info-circle"></i>
+                            Correlation analysis coming soon...
+                        </div>
+                    </div>
+                `;
+            }
+
+            createAnomalyAnalysis() {
+                // TODO: Implement anomaly detection
+                const analysisGrid = document.getElementById('analysisGrid');
+                analysisGrid.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3 class="card-title">Anomaly Detection</h3>
+                        </div>
+                        <div class="loading-state">
+                            <i class="fas fa-info-circle"></i>
+                            Anomaly detection coming soon...
+                        </div>
+                    </div>
+                `;
+            }
+
+            createChart(canvasId, type, dataKey, label) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                
+                const data = this.currentData.map(d => ({
+                    x: d.date,
+                    y: d[dataKey]
+                })).filter(d => !isNaN(d.y));
+
+                this.charts[canvasId] = new Chart(ctx, {
+                    type: type,
+                    data: {
+                        datasets: [{
+                            label: label,
+                            data: data,
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            fill: type === 'line',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: { unit: 'month' }
+                            },
+                            y: {
+                                title: { display: true, text: label }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize analysis when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ClimateAnalysis();
+        });
+    </script>
+</body>
+</html>

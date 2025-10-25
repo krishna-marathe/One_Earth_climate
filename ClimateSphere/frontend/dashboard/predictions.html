@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimateSphere — Predictions & Scenario Simulator</title>
+    
+    <!-- Redirect to enhanced version -->
+    <script>
+        window.location.href = 'predictions-enhanced.html';
+    </script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css" />
+    <link rel="stylesheet" href="./assets/css/dashboard.css" />
+    <style>
+        /* Small page-specific styles */
+        .pred-page { padding: 20px; }
+        .controls { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px; }
+        .card { background:#fff; border-radius:8px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+        .slider { width:300px; }
+        .chart-wrap { width:100%; max-width:900px; margin-top:18px; }
+        .action-row { margin-top:16px; display:flex; gap:12px; }
+        .small { font-size:0.9rem; color:#555; }
+    </style>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- shared API helper -->
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+</head>
+<body class="pred-page">
+    
+    <!-- Header (reuse) -->
+    <header class="site-header card" style="display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>ClimateSphere</strong></div>
+        <nav>
+            <a href="../landing/index.html">Home</a> |
+            <a href="../dashboard/dashboard.html">Dashboard</a> |
+            <a href="../auth/login.html">Login</a>
+        </nav>
+    </header>
+    
+    <h2>Predictions & Scenario Simulator</h2>
+    
+    <!-- Top controls -->
+    <div class="controls">
+        <div class="card">
+            <label class="small">Region / Country</label><br/>
+            <select id="regionSelect"></select>
+        </div>
+        
+        <div class="card">
+            <label class="small">Prediction period</label><br/>
+            <select id="periodSelect">
+                <option value="1">1 year</option>
+                <option value="5" selected>5 years</option>
+                <option value="10">10 years</option>
+            </select>
+        </div>
+        
+        <div class="card">
+            <label class="small">Target variable</label><br/>
+            <select id="targetSelect">
+                <option value="Temperature_C">Temperature</option>
+                <option value="CO2_ppm">CO₂</option>
+                <option value="Rainfall_mm">Rainfall</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Scenario sliders -->
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+        <div class="card">
+            <label class="small">CO₂ change (%)</label><br/>
+            <input id="co2Slider" type="range" min="-50" max="100" value="0" class="slider" />
+            <div>Δ CO₂: <span id="co2Val">0%</span></div>
+        </div>
+        
+        <div class="card">
+            <label class="small">Deforestation change (%)</label><br/>
+            <input id="deforestSlider" type="range" min="-50" max="100" value="0" class="slider" />
+            <div>Δ Deforestation: <span id="deforestVal">0%</span></div>
+        </div>
+        
+        <div class="card">
+            <label class="small">Renewables increase (%)</label><br/>
+            <input id="renewSlider" type="range" min="0" max="200" value="0" class="slider" />
+            <div>Δ Renewables: <span id="renewVal">0%</span></div>
+        </div>
+    </div>
+    
+    <!-- Action -->
+    <div class="action-row">
+        <button id="runSim" class="card">Run Simulation</button>
+        <button id="saveScenario" class="card">Save Scenario</button>
+        <button id="downloadPrediction" class="card">Download Prediction (JSON)</button>
+    </div>
+    
+    <!-- Output -->
+    <div id="results" style="margin-top:20px">
+        <div id="summary" class="card small">No simulation run yet.</div>
+        
+        <div class="chart-wrap card">
+            <canvas id="predChart" width="800" height="360"></canvas>
+        </div>
+        
+        <div id="riskBoxes" style="margin-top:12px; display:flex; gap:12px">
+            <div id="floodRisk" class="card">Flood risk: —</div>
+            <div id="droughtRisk" class="card">Drought risk: —</div>
+            <div id="heatRisk" class="card">Heatwave risk: —</div>
+        </div>
+    </div>
+
+<script>
+/*
+  Predictions page JS
+  - Uses CS_API.get/post from shared api.js
+  - Falls back to client-side simple emulator when backend missing
+*/
+
+const FALLBACK_REGION_LIST = [
+  { country: 'India', region: 'Maharashtra-Mumbai' },
+  { country: 'USA', region: 'California-Los Angeles' },
+  { country: 'Brazil', region: 'Sao Paulo-Sao Paulo' }
+];
+
+function $(id){ return document.getElementById(id); }
+
+// init controls
+function populateRegions(list=FALLBACK_REGION_LIST){
+  const sel = $('regionSelect');
+  sel.innerHTML = '';
+  list.forEach(r=>{
+    const opt = document.createElement('option');
+    opt.value = JSON.stringify(r);
+    opt.text = r.country + ' — ' + r.region;
+    sel.appendChild(opt);
+  });
+}
+
+// small emulator: linear trend + sliders influence
+function emulatePrediction(baseSeries, years, sliders){
+  // baseSeries is array of last N years values (we take last value as base)
+  const base = baseSeries[baseSeries.length-1] ?? baseSeries[0] ?? 100;
+  const out = [];
+  const co2Factor = 1 + sliders.co2/100;
+  const defFactor = 1 - sliders.deforest/200; // less deforestation reduces some stress
+  const renewFactor = 1 - sliders.renew/400;
+  let value = base;
+  for(let i=1;i<=years;i++){
+    // simple growth/decay model
+    value = value * (1 + 0.01*co2Factor - 0.005*(defFactor) - 0.003*(renewFactor));
+    out.push( Math.max(0, parseFloat(value.toFixed(2))) );
+  }
+  return out;
+}
+
+// call server; fallback to emulator
+async function runSimulation(){
+  const region = JSON.parse($('regionSelect').value);
+  const years = parseInt($('periodSelect').value,10);
+  const target = $('targetSelect').value;
+  const sliders = {
+    co2: parseInt($('co2Slider').value,10),
+    deforest: parseInt($('deforestSlider').value,10),
+    renew: parseInt($('renewSlider').value,10)
+  };
+  
+  $('summary').textContent = 'Running simulation...';
+  
+  // Check if we have uploaded data from the upload page
+  const uploadedData = localStorage.getItem('climateSphere_uploadedData');
+  let predictionData = { region, years, target, sliders };
+  
+  if (uploadedData) {
+    try {
+      const parsedData = JSON.parse(uploadedData);
+      predictionData.uploadedData = parsedData;
+      console.log('Using uploaded data for predictions:', parsedData.length, 'records');
+    } catch (e) {
+      console.warn('Failed to parse uploaded data:', e);
+    }
+  }
+  
+  // Try backend first
+  try {
+    const resp = await window.CS_API.post('/predict', predictionData);
+    if(resp && resp.demo){
+      // backend not reachable or demo: emulate on client with uploaded data
+      throw new Error('demo mode fallback');
+    }
+    // expected resp.data => { timeline: [..], risk: {flood:.., drought:.., heat:..} }
+    const data = resp.data;
+    updateResults(data.timeline, data.risk, target, years);
+    return;
+  } catch(e){
+    // fallback emulator path - use uploaded data if available
+    let baseSeries;
+    
+    if (uploadedData) {
+      try {
+        const parsedData = JSON.parse(uploadedData);
+        // Extract relevant data for the target variable
+        baseSeries = extractTimeSeriesFromUploadedData(parsedData, target);
+      } catch (err) {
+        console.warn('Error processing uploaded data:', err);
+        baseSeries = [100, 105, 110, 115, 120].map(x=>x*Math.random());
+      }
+    } else {
+      // create a demo base series (last 5 values) -- random-ish but region-aware
+      baseSeries = [100, 105, 110, 115, 120].map(x=>x*Math.random());
+    }
+    
+    const timeline = emulatePrediction(baseSeries, years, sliders);
+    // Enhanced risk calculation based on uploaded data patterns
+    const lastVal = timeline[timeline.length-1];
+    const risk = calculateEnhancedRisk(sliders, lastVal, uploadedData);
+    updateResults(timeline, risk, target, years);
+  }
+}
+
+// Extract time series data from uploaded dataset
+function extractTimeSeriesFromUploadedData(data, target) {
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return [100, 105, 110, 115, 120].map(x=>x*Math.random());
+  }
+  
+  // Map target to possible column names in uploaded data
+  const targetMappings = {
+    'Temperature_C': ['temperature', 'temp', 'Temperature', 'Temp'],
+    'CO2_ppm': ['co2', 'CO2', 'carbon', 'Carbon'],
+    'Rainfall_mm': ['rainfall', 'rain', 'precipitation', 'Rainfall', 'Rain']
+  };
+  
+  const possibleColumns = targetMappings[target] || [target.toLowerCase()];
+  let targetColumn = null;
+  
+  // Find the matching column in uploaded data
+  for (const col of possibleColumns) {
+    if (data[0] && data[0].hasOwnProperty(col)) {
+      targetColumn = col;
+      break;
+    }
+  }
+  
+  if (targetColumn) {
+    // Extract last 10 values for trend analysis
+    const values = data
+      .map(row => parseFloat(row[targetColumn]))
+      .filter(val => !isNaN(val))
+      .slice(-10);
+    
+    if (values.length > 0) {
+      console.log(`Using ${values.length} values from uploaded data for ${target}`);
+      return values;
+    }
+  }
+  
+  // Fallback to demo data
+  return [100, 105, 110, 115, 120].map(x=>x*Math.random());
+}
+
+// Enhanced risk calculation using uploaded data patterns
+function calculateEnhancedRisk(sliders, lastVal, uploadedData) {
+  let baseRisk = {
+    flood: Math.min(100, Math.round((sliders.co2 + lastVal/5) % 100)),
+    drought: Math.min(100, Math.round((100 - sliders.deforest + lastVal/8) % 100)),
+    heat: Math.min(100, Math.round((sliders.co2*1.2 + lastVal/4) % 100))
+  };
+  
+  if (uploadedData) {
+    try {
+      const parsedData = JSON.parse(uploadedData);
+      
+      // Analyze uploaded data patterns to adjust risk
+      const tempData = extractColumnData(parsedData, ['temperature', 'temp']);
+      const rainfallData = extractColumnData(parsedData, ['rainfall', 'rain', 'precipitation']);
+      const co2Data = extractColumnData(parsedData, ['co2', 'CO2', 'carbon']);
+      
+      // Adjust risks based on data patterns
+      if (tempData.length > 0) {
+        const avgTemp = tempData.reduce((a, b) => a + b, 0) / tempData.length;
+        if (avgTemp > 30) baseRisk.heat += 15;
+        if (avgTemp > 35) baseRisk.flood += 10;
+      }
+      
+      if (rainfallData.length > 0) {
+        const avgRainfall = rainfallData.reduce((a, b) => a + b, 0) / rainfallData.length;
+        if (avgRainfall < 50) baseRisk.drought += 20;
+        if (avgRainfall > 200) baseRisk.flood += 25;
+      }
+      
+      if (co2Data.length > 0) {
+        const avgCO2 = co2Data.reduce((a, b) => a + b, 0) / co2Data.length;
+        if (avgCO2 > 400) {
+          baseRisk.heat += 10;
+          baseRisk.drought += 5;
+        }
+      }
+      
+      console.log('Enhanced risk calculation using uploaded data patterns');
+    } catch (e) {
+      console.warn('Error in enhanced risk calculation:', e);
+    }
+  }
+  
+  // Ensure risks are within bounds
+  Object.keys(baseRisk).forEach(key => {
+    baseRisk[key] = Math.max(0, Math.min(100, baseRisk[key]));
+  });
+  
+  return baseRisk;
+}
+
+// Helper function to extract column data
+function extractColumnData(data, possibleColumns) {
+  for (const col of possibleColumns) {
+    if (data[0] && data[0].hasOwnProperty(col)) {
+      return data
+        .map(row => parseFloat(row[col]))
+        .filter(val => !isNaN(val));
+    }
+  }
+  return [];
+}
+
+let chart = null;
+function updateResults(timeline, risk, target, years){
+  $('summary').textContent = `Predicted ${target} for next ${years} year(s).`;
+  // prepare labels
+  const labels = [...Array(timeline.length)].map((_,i)=>`+${i+1}y`);
+  const ctx = document.getElementById('predChart').getContext('2d');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: target,
+        data: timeline,
+        fill:false,
+        borderWidth:2,
+        tension:0.25
+      }]
+    },
+    options: { responsive:true }
+  });
+  
+  $('floodRisk').textContent = `Flood risk: ${risk.flood}%`;
+  $('droughtRisk').textContent = `Drought risk: ${risk.drought}%`;
+  $('heatRisk').textContent = `Heatwave risk: ${risk.heat}%`;
+  
+  // attach last result for download
+  window.__lastPrediction = { timeline, risk, target, years, timestamp: new Date().toISOString() };
+}
+
+function downloadPrediction(){
+  const p = window.__lastPrediction;
+  if(!p){ alert('Run a simulation first'); return; }
+  const blob = new Blob([JSON.stringify(p, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prediction_${p.target}_${p.years}y.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* wire events */
+window.addEventListener('DOMContentLoaded', () => {
+  populateRegions();
+  $('co2Slider').addEventListener('input', e => $('co2Val').textContent = e.target.value + '%');
+  $('deforestSlider').addEventListener('input', e => $('deforestVal').textContent = e.target.value + '%');
+  $('renewSlider').addEventListener('input', e => $('renewVal').textContent = e.target.value + '%');
+  $('runSim').addEventListener('click', runSimulation);
+  $('downloadPrediction').addEventListener('click', downloadPrediction);
+  $('saveScenario').addEventListener('click', async ()=>{
+    const p = window.__lastPrediction;
+    if(!p){ alert('Run a simulation first'); return; }
+    // save to backend if available
+    try {
+      await window.CS_API.post('/api/scenario/save', p);
+      alert('Scenario saved to server (or demo fallback).');
+    } catch(err){
+      alert('Saved to demo storage in-browser.');
+      localStorage.setItem('cs_last_scenario', JSON.stringify(p));
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">
+                🌍 ClimateSphere
+            </a>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        👤 User
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="upload.html">Upload Data</a></li>
+                        <li><a class="dropdown-item" href="analysis.html">Analysis</a></li>
+                        <li><a class="dropdown-item" href="predictions.html">Predictions</a></li>
+                        <li><a class="dropdown-item" href="insights.html">AI Insights</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item logout-btn" href="#">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h5>📊 Dashboard</h5>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link active">
+                    <span class="nav-icon">🏠</span>
+                    Overview
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <span class="nav-icon">📤</span>
+                    Upload Data
+                </a>
+                <a href="analysis.html" class="nav-link">
+                    <span class="nav-icon">📈</span>
+                    Analysis
+                </a>
+                <a href="predictions.html" class="nav-link">
+                    <span class="nav-icon">🔮</span>
+                    Predictions
+                </a>
+                <a href="insights.html" class="nav-link">
+                    <span class="nav-icon">💡</span>
+                    AI Insights
+                </a>
+                <div class="nav-divider"></div>
+                <h6 class="nav-header">Climate Modules</h6>
+                <a href="climateModules/globalwarming.html" class="nav-link">
+                    <span class="nav-icon">🌡️</span>
+                    Global Warming
+                </a>
+                <a href="climateModules/floods.html" class="nav-link">
+                    <span class="nav-icon">🌊</span>
+                    Floods
+                </a>
+                <a href="climateModules/drought.html" class="nav-link">
+                    <span class="nav-icon">🏜️</span>
+                    Drought
+                </a>
+                <a href="climateModules/airpollution.html" class="nav-link">
+                    <span class="nav-icon">💨</span>
+                    Air Pollution
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Demo Mode Indicator -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div id="demoModeIndicator" class="alert alert-info" style="display: none;">
+                        🎮 <strong>Demo Mode</strong> - You're viewing sample data. 
+                        <a href="#" onclick="showLogin()" class="alert-link">Login</a> or 
+                        <a href="#" onclick="showRegister()" class="alert-link">Sign Up</a> for full features.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary">🌡️</div>
+                        <div class="stat-content">
+                            <h3 id="dashTemp">25.4°C</h3>
+                            <p>Global Temperature</p>
+                            <small class="text-success">+1.2°C from baseline</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning">💨</div>
+                        <div class="stat-content">
+                            <h3 id="dashCO2">421 ppm</h3>
+                            <p>CO₂ Levels</p>
+                            <small class="text-danger">+2.8 ppm this year</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info">🌧️</div>
+                        <div class="stat-content">
+                            <h3 id="dashRainfall">98.7mm</h3>
+                            <p>Avg Rainfall</p>
+                            <small class="text-danger">-5.2mm from normal</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-danger">🌊</div>
+                        <div class="stat-content">
+                            <h3 id="dashSeaLevel">+3.4mm</h3>
+                            <p>Sea Level Rise</p>
+                            <small class="text-danger">+0.3mm this year</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5>📈 Temperature Trends</h5>
+                            <div class="chart-controls">
+                                <select class="form-select form-select-sm" id="tempTimeRange">
+                                    <option value="1y">Last Year</option>
+                                    <option value="5y">Last 5 Years</option>
+                                    <option value="10y">Last 10 Years</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="temperatureChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5>⚠️ Risk Assessment</h5>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Alerts & Recent Activity -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="alert-card">
+                        <div class="alert-header">
+                            <h5>🚨 Risk Alerts</h5>
+                            <span class="badge bg-danger">3 Active</span>
+                        </div>
+                        <div class="alert-list">
+                            <div class="alert-item high">
+                                <div class="alert-icon">🌊</div>
+                                <div class="alert-content">
+                                    <h6>High Flood Risk</h6>
+                                    <p>Coastal regions showing 78% flood probability</p>
+                                    <small>2 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="alert-item medium">
+                                <div class="alert-icon">🏜️</div>
+                                <div class="alert-content">
+                                    <h6>Drought Warning</h6>
+                                    <p>Agricultural areas at 65% drought risk</p>
+                                    <small>5 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="alert-item high">
+                                <div class="alert-icon">🌡️</div>
+                                <div class="alert-content">
+                                    <h6>Heatwave Alert</h6>
+                                    <p>Urban areas showing extreme heat conditions</p>
+                                    <small>1 day ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h5>📋 Recent Activity</h5>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">📤</div>
+                                <div class="activity-content">
+                                    <p>Climate dataset uploaded</p>
+                                    <small>30 minutes ago</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">🤖</div>
+                                <div class="activity-content">
+                                    <p>ML prediction completed</p>
+                                    <small>1 hour ago</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">💡</div>
+                                <div class="activity-content">
+                                    <p>AI insights generated</p>
+                                    <small>2 hours ago</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">📊</div>
+                                <div class="activity-content">
+                                    <p>Analysis report created</p>
+                                    <small>3 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="quick-actions-card">
+                        <h5 class="mb-3">⚡ Quick Actions</h5>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <a href="upload.html" class="quick-action-btn">
+                                    <div class="action-icon">📤</div>
+                                    <span>Upload Data</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="predictions.html" class="quick-action-btn">
+                                    <div class="action-icon">🔮</div>
+                                    <span>Run Prediction</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="analysis.html" class="quick-action-btn">
+                                    <div class="action-icon">📈</div>
+                                    <span>Analyze Trends</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="insights.html" class="quick-action-btn">
+                                    <div class="action-icon">💡</div>
+                                    <span>Get Insights</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to ClimateSphere</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Join ClimateSphere</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="registerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/charts.js"></script>
+</body>
+</html>

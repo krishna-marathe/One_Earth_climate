@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insights - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #f8fafc; 
+            padding-top: 70px;
+        }
+        .navbar { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; 
+        }
+        .insight-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+        }
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+            background: #f9fafb;
+        }
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+        }
+        .chat-user {
+            background: #3b82f6;
+            color: white;
+            margin-left: 2rem;
+        }
+        .chat-ai {
+            background: #10b981;
+            color: white;
+            margin-right: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">🌍 ClimateSphere</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="dashboard_simple.html">← Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>💡 AI Climate Insights</h2>
+                    <div class="badge bg-info fs-6">
+                        🎮 Demo Mode - <a href="dashboard_simple.html" class="text-white">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="insight-card">
+                    <h5>🤖 AI Climate Analysis</h5>
+                    <div class="alert alert-info">
+                        <h6>🔍 Current Climate Analysis</h6>
+                        <p>Based on the latest data analysis, we're observing significant climate patterns:</p>
+                        <ul>
+                            <li><strong>Temperature Trend:</strong> Global temperatures have increased by 1.2°C from baseline, indicating accelerated warming.</li>
+                            <li><strong>CO₂ Levels:</strong> Atmospheric CO₂ has reached 421 ppm, the highest in recorded history.</li>
+                            <li><strong>Precipitation Changes:</strong> Rainfall patterns show 5.2mm decrease from normal, affecting agricultural regions.</li>
+                            <li><strong>Sea Level Rise:</strong> Ocean levels have risen 3.4mm this year, threatening coastal communities.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <h6>⚠️ Risk Assessment</h6>
+                        <p>Our ML models predict elevated risks across multiple climate hazards:</p>
+                        <ul>
+                            <li><strong>Flood Risk:</strong> 78% probability in coastal and low-lying areas</li>
+                            <li><strong>Drought Risk:</strong> 65% probability in agricultural regions</li>
+                            <li><strong>Heatwave Risk:</strong> 82% probability in urban areas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="insight-card">
+                    <h5>📋 Policy Recommendations</h5>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <h6 class="mb-1">🏭 Emission Reduction</h6>
+                            <p class="mb-1">Implement carbon pricing and transition to renewable energy</p>
+                            <small class="text-muted">Priority: High</small>
+                        </div>
+                        <div class="list-group-item">
+                            <h6 class="mb-1">🌊 Flood Protection</h6>
+                            <p class="mb-1">Enhance coastal defenses and early warning systems</p>
+                            <small class="text-muted">Priority: High</small>
+                        </div>
+                        <div class="list-group-item">
+                            <h6 class="mb-1">🌱 Adaptation Measures</h6>
+                            <p class="mb-1">Develop climate-resilient infrastructure</p>
+                            <small class="text-muted">Priority: Medium</small>
+                        </div>
+                        <div class="list-group-item">
+                            <h6 class="mb-1">📊 Monitoring Systems</h6>
+                            <p class="mb-1">Expand climate data collection networks</p>
+                            <small class="text-muted">Priority: Medium</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Chat Interface -->
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="insight-card">
+                    <h5>💬 Chat with Climate AI</h5>
+                    <div class="chat-container" id="chatContainer">
+                        <div class="chat-message chat-ai">
+                            <strong>🤖 Climate AI:</strong> Hello! I'm your AI climate assistant. Ask me anything about climate data, trends, or predictions. How can I help you today?
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="chatInput" placeholder="Ask about climate trends, risks, or predictions...">
+                            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Try asking: "What are the main climate risks?" or "How can we reduce CO₂ emissions?"
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Insights -->
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="insight-card">
+                    <h5 class="mb-3">⚡ Quick Insights</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100" onclick="generateInsight('temperature')">
+                                🌡️ Temperature Insights
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-success w-100" onclick="generateInsight('emissions')">
+                                💨 Emission Analysis
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info w-100" onclick="generateInsight('risks')">
+                                ⚠️ Risk Analysis
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-warning w-100" onclick="generateInsight('solutions')">
+                                💡 Solution Recommendations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const responses = {
+            temperature: "🌡️ Temperature analysis shows a concerning upward trend. Global temperatures have risen 1.2°C above baseline, with urban areas experiencing the most significant increases due to heat island effects.",
+            emissions: "💨 CO₂ emissions analysis reveals we're at 421 ppm, the highest in human history. To limit warming to 1.5°C, we need to reduce emissions by 45% by 2030.",
+            risks: "⚠️ Risk analysis indicates elevated threats: 78% flood risk in coastal areas, 65% drought risk in agricultural regions, and 82% heatwave risk in urban centers.",
+            solutions: "💡 Key solutions include: transitioning to renewable energy (can reduce emissions by 40%), implementing carbon pricing, enhancing natural carbon sinks, and developing climate-resilient infrastructure.",
+            default: "🤖 I can help you understand climate data, analyze trends, assess risks, and recommend solutions. What specific aspect of climate change would you like to explore?"
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message chat-user';
+            userMessage.innerHTML = `<strong>👤 You:</strong> ${message}`;
+            chatContainer.appendChild(userMessage);
+
+            // Generate AI response
+            setTimeout(() => {
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'chat-message chat-ai';
+                
+                let response = responses.default;
+                const lowerMessage = message.toLowerCase();
+                
+                if (lowerMessage.includes('temperature') || lowerMessage.includes('warming')) {
+                    response = responses.temperature;
+                } else if (lowerMessage.includes('emission') || lowerMessage.includes('co2') || lowerMessage.includes('carbon')) {
+                    response = responses.emissions;
+                } else if (lowerMessage.includes('risk') || lowerMessage.includes('flood') || lowerMessage.includes('drought')) {
+                    response = responses.risks;
+                } else if (lowerMessage.includes('solution') || lowerMessage.includes('reduce') || lowerMessage.includes('help')) {
+                    response = responses.solutions;
+                }
+                
+                aiMessage.innerHTML = `<strong>🤖 Climate AI:</strong> ${response}`;
+                chatContainer.appendChild(aiMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1000);
+
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function generateInsight(type) {
+            const chatContainer = document.getElementById('chatContainer');
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'chat-message chat-ai';
+            aiMessage.innerHTML = `<strong>🤖 Climate AI:</strong> ${responses[type]}`;
+            chatContainer.appendChild(aiMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Allow Enter key to send message
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

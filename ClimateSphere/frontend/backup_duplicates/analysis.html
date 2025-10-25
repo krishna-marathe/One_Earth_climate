@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #f8fafc; 
+            padding-top: 70px;
+        }
+        .navbar { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; 
+        }
+        .analysis-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+        }
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">🌍 ClimateSphere</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="dashboard_simple.html">← Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>📈 Climate Data Analysis</h2>
+                    <div class="badge bg-info fs-6">
+                        🎮 Demo Mode - <a href="dashboard_simple.html" class="text-white">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Options -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="analysis-card">
+                    <h5>📊 Trend Analysis</h5>
+                    <p class="text-muted">Analyze climate trends over time</p>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="analysis-card">
+                    <h5>🔗 Correlation Analysis</h5>
+                    <p class="text-muted">Find relationships between climate variables</p>
+                    <div class="chart-container">
+                        <canvas id="correlationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="analysis-card">
+                    <h5>🌍 Regional Analysis</h5>
+                    <p class="text-muted">Compare climate data by region</p>
+                    <div class="chart-container">
+                        <canvas id="regionalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistical Summary -->
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="analysis-card">
+                    <h5>📋 Statistical Summary</h5>
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-primary">25.4°C</h3>
+                                <p class="text-muted">Average Temperature</p>
+                                <small class="text-success">+1.2°C from baseline</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-warning">421 ppm</h3>
+                                <p class="text-muted">Average CO₂</p>
+                                <small class="text-danger">+2.8 ppm this year</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-info">98.7mm</h3>
+                                <p class="text-muted">Average Rainfall</p>
+                                <small class="text-danger">-5.2mm from normal</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-danger">+3.4mm</h3>
+                                <p class="text-muted">Sea Level Rise</p>
+                                <small class="text-danger">+0.3mm this year</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="analysis-card">
+                    <h5 class="mb-3">⚡ Analysis Actions</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100" onclick="runTrendAnalysis()">
+                                📈 Run Trend Analysis
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-success w-100" onclick="runCorrelationAnalysis()">
+                                🔗 Find Correlations
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info w-100" onclick="runRegionalAnalysis()">
+                                🌍 Regional Analysis
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="predictions.html" class="btn btn-outline-warning w-100">
+                                🔮 Go to Predictions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2020', '2021', '2022', '2023', '2024'],
+                        datasets: [{
+                            label: 'Temperature Trend',
+                            data: [24.1, 24.5, 24.9, 25.2, 25.4],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Correlation Chart
+            const corrCtx = document.getElementById('correlationChart');
+            if (corrCtx) {
+                new Chart(corrCtx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Temperature vs CO₂',
+                            data: [
+                                {x: 400, y: 24.1}, {x: 410, y: 24.5}, 
+                                {x: 415, y: 24.9}, {x: 418, y: 25.2}, 
+                                {x: 421, y: 25.4}
+                            ],
+                            backgroundColor: '#3b82f6',
+                            borderColor: '#3b82f6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { title: { display: true, text: 'CO₂ (ppm)' } },
+                            y: { title: { display: true, text: 'Temperature (°C)' } }
+                        }
+                    }
+                });
+            }
+
+            // Regional Chart
+            const regCtx = document.getElementById('regionalChart');
+            if (regCtx) {
+                new Chart(regCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['North America', 'Europe', 'Asia', 'Africa', 'South America'],
+                        datasets: [{
+                            label: 'Average Temperature',
+                            data: [23.5, 22.1, 26.8, 28.2, 25.9],
+                            backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+
+        function runTrendAnalysis() {
+            alert('🔄 Running trend analysis...\n\n✅ Analysis complete!\n\n📈 Temperature shows upward trend of +0.3°C per year\n🌧️ Rainfall shows declining trend of -2mm per year\n💨 CO₂ levels increasing at +2.5ppm per year');
+        }
+
+        function runCorrelationAnalysis() {
+            alert('🔄 Running correlation analysis...\n\n✅ Analysis complete!\n\n🔗 Strong correlations found:\n• Temperature ↔ CO₂: 0.87 (strong positive)\n• Temperature ↔ Rainfall: -0.43 (moderate negative)\n• CO₂ ↔ Sea Level: 0.72 (strong positive)');
+        }
+
+        function runRegionalAnalysis() {
+            alert('🔄 Running regional analysis...\n\n✅ Analysis complete!\n\n🌍 Regional findings:\n• Africa: Highest average temperature (28.2°C)\n• Europe: Lowest average temperature (22.1°C)\n• Asia: Highest variability in climate patterns\n• South America: Most affected by deforestation');
+        }
+    </script>
+</body>
+</html>

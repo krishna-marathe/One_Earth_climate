@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #f8fafc; 
+            padding-top: 70px;
+        }
+        .navbar { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; 
+        }
+        .prediction-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+        }
+        .risk-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .risk-card.low { border-color: #10b981; background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%); }
+        .risk-card.medium { border-color: #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%); }
+        .risk-card.high { border-color: #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #fef1f1 100%); }
+        .risk-percentage { font-size: 1.8rem; font-weight: bold; color: #1f2937; margin: 0.5rem 0; }
+        .slider-container { margin-bottom: 1rem; }
+        .form-range::-webkit-slider-thumb { background: #2563eb; }
+        .form-range::-moz-range-thumb { background: #2563eb; border: none; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">🌍 ClimateSphere</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="dashboard_simple.html">← Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>🔮 Climate Risk Predictions</h2>
+                    <div class="badge bg-info fs-6">
+                        🎮 Demo Mode - <a href="dashboard_simple.html" class="text-white">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Controls -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <div class="prediction-card">
+                    <h5>🎛️ Input Parameters</h5>
+                    <form id="predictionForm">
+                        <div class="slider-container">
+                            <label class="form-label">🌡️ Temperature (°C)</label>
+                            <input type="range" class="form-range" id="tempSlider" min="0" max="50" value="25">
+                            <div class="d-flex justify-content-between">
+                                <small>0°C</small>
+                                <span id="tempValue" class="fw-bold">25°C</span>
+                                <small>50°C</small>
+                            </div>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label class="form-label">🌧️ Rainfall (mm)</label>
+                            <input type="range" class="form-range" id="rainfallSlider" min="0" max="300" value="100">
+                            <div class="d-flex justify-content-between">
+                                <small>0mm</small>
+                                <span id="rainfallValue" class="fw-bold">100mm</span>
+                                <small>300mm</small>
+                            </div>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label class="form-label">💧 Humidity (%)</label>
+                            <input type="range" class="form-range" id="humiditySlider" min="0" max="100" value="60">
+                            <div class="d-flex justify-content-between">
+                                <small>0%</small>
+                                <span id="humidityValue" class="fw-bold">60%</span>
+                                <small>100%</small>
+                            </div>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label class="form-label">💨 CO₂ Level (ppm)</label>
+                            <input type="range" class="form-range" id="co2Slider" min="300" max="600" value="420">
+                            <div class="d-flex justify-content-between">
+                                <small>300ppm</small>
+                                <span id="co2Value" class="fw-bold">420ppm</span>
+                                <small>600ppm</small>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary w-100" onclick="generatePrediction()">
+                            🔮 Generate Predictions
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="prediction-card">
+                    <h5>📊 Risk Assessment Results</h5>
+                    <div class="row g-3" id="riskCards">
+                        <div class="col-md-4">
+                            <div class="risk-card medium" id="floodCard">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌊</div>
+                                <h6>Flood Risk</h6>
+                                <div class="risk-percentage" id="floodRisk">65%</div>
+                                <div class="text-muted" id="floodLevel">Medium</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="risk-card low" id="droughtCard">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏜️</div>
+                                <h6>Drought Risk</h6>
+                                <div class="risk-percentage" id="droughtRisk">35%</div>
+                                <div class="text-muted" id="droughtLevel">Low</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="risk-card high" id="heatwaveCard">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌡️</div>
+                                <h6>Heatwave Risk</h6>
+                                <div class="risk-percentage" id="heatwaveRisk">78%</div>
+                                <div class="text-muted" id="heatwaveLevel">High</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scenario Simulation -->
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="prediction-card">
+                    <h5>🎯 Scenario Simulation</h5>
+                    <p class="text-muted">Explore "what-if" scenarios by adjusting environmental factors</p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <label class="form-label">🏭 CO₂ Change (%)</label>
+                            <input type="range" class="form-range" id="co2ChangeSlider" min="-50" max="100" value="0">
+                            <div class="d-flex justify-content-between">
+                                <small>-50%</small>
+                                <span id="co2ChangeValue" class="fw-bold">0%</span>
+                                <small>+100%</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">🌳 Deforestation (%)</label>
+                            <input type="range" class="form-range" id="deforestationSlider" min="0" max="100" value="0">
+                            <div class="d-flex justify-content-between">
+                                <small>0%</small>
+                                <span id="deforestationValue" class="fw-bold">0%</span>
+                                <small>100%</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">⚡ Renewable Energy (%)</label>
+                            <input type="range" class="form-range" id="renewableSlider" min="0" max="100" value="50">
+                            <div class="d-flex justify-content-between">
+                                <small>0%</small>
+                                <span id="renewableValue" class="fw-bold">50%</span>
+                                <small>100%</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button class="btn btn-success" onclick="runScenarioSimulation()">
+                            🎯 Run Scenario
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Predictions -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="prediction-card">
+                    <h5>🔮 Future Climate Projections</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Target Year</label>
+                        <select class="form-select" id="targetYear">
+                            <option value="2025">2025</option>
+                            <option value="2030" selected>2030</option>
+                            <option value="2035">2035</option>
+                            <option value="2040">2040</option>
+                            <option value="2050">2050</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-info w-100" onclick="generateFuturePrediction()">
+                        🔮 Generate Future Prediction
+                    </button>
+                    
+                    <div class="mt-4" id="futureResults">
+                        <h6>📊 Projected Conditions for 2030</h6>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <div class="fw-bold">26.2°C</div>
+                                    <small class="text-muted">Temperature</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <div class="fw-bold">95.5mm</div>
+                                    <small class="text-muted">Rainfall</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <div class="fw-bold">445ppm</div>
+                                    <small class="text-muted">CO₂ Level</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <div class="fw-bold">62%</div>
+                                    <small class="text-muted">Humidity</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="prediction-card">
+                    <h5>🤖 Model Performance</h5>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Flood Model Accuracy</span>
+                            <span class="fw-bold text-success">87%</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" style="width: 87%"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Drought Model Accuracy</span>
+                            <span class="fw-bold text-warning">82%</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-warning" style="width: 82%"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Heatwave Model Accuracy</span>
+                            <span class="fw-bold text-info">91%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: 91%"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-outline-primary w-100" onclick="testRealPrediction()">
+                        🧪 Test with Real ML Models
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Setup sliders
+        const sliders = [
+            { id: 'tempSlider', valueId: 'tempValue', suffix: '°C' },
+            { id: 'rainfallSlider', valueId: 'rainfallValue', suffix: 'mm' },
+            { id: 'humiditySlider', valueId: 'humidityValue', suffix: '%' },
+            { id: 'co2Slider', valueId: 'co2Value', suffix: 'ppm' },
+            { id: 'co2ChangeSlider', valueId: 'co2ChangeValue', suffix: '%' },
+            { id: 'deforestationSlider', valueId: 'deforestationValue', suffix: '%' },
+            { id: 'renewableSlider', valueId: 'renewableValue', suffix: '%' }
+        ];
+
+        sliders.forEach(slider => {
+            const element = document.getElementById(slider.id);
+            const valueElement = document.getElementById(slider.valueId);
+            
+            if (element && valueElement) {
+                element.addEventListener('input', (e) => {
+                    let value = e.target.value;
+                    if (slider.id === 'co2ChangeSlider' && value > 0) {
+                        value = '+' + value;
+                    }
+                    valueElement.textContent = value + slider.suffix;
+                    
+                    // Auto-update predictions when sliders change
+                    if (['tempSlider', 'rainfallSlider', 'humiditySlider', 'co2Slider'].includes(slider.id)) {
+                        setTimeout(generatePrediction, 500);
+                    }
+                });
+            }
+        });
+
+        function generatePrediction() {
+            const temp = document.getElementById('tempSlider').value;
+            const rainfall = document.getElementById('rainfallSlider').value;
+            const humidity = document.getElementById('humiditySlider').value;
+            const co2 = document.getElementById('co2Slider').value;
+            
+            // Simple prediction algorithm based on inputs
+            const floodRisk = Math.min(100, Math.max(0, (rainfall * 0.3) + (humidity * 0.2) + (temp * 0.1)));
+            const droughtRisk = Math.min(100, Math.max(0, (temp * 0.4) + (co2 * 0.1) - (rainfall * 0.2)));
+            const heatwaveRisk = Math.min(100, Math.max(0, (temp * 0.6) + (co2 * 0.2) - (humidity * 0.1)));
+            
+            updateRiskCard('flood', Math.round(floodRisk));
+            updateRiskCard('drought', Math.round(droughtRisk));
+            updateRiskCard('heatwave', Math.round(heatwaveRisk));
+        }
+
+        function updateRiskCard(type, percentage) {
+            const riskElement = document.getElementById(type + 'Risk');
+            const levelElement = document.getElementById(type + 'Level');
+            const cardElement = document.getElementById(type + 'Card');
+            
+            if (riskElement && levelElement && cardElement) {
+                riskElement.textContent = percentage + '%';
+                
+                let level, className;
+                if (percentage < 40) {
+                    level = 'Low';
+                    className = 'low';
+                } else if (percentage < 70) {
+                    level = 'Medium';
+                    className = 'medium';
+                } else {
+                    level = 'High';
+                    className = 'high';
+                }
+                
+                levelElement.textContent = level;
+                cardElement.className = `risk-card ${className}`;
+            }
+        }
+
+        function runScenarioSimulation() {
+            const co2Change = document.getElementById('co2ChangeSlider').value;
+            const deforestation = document.getElementById('deforestationSlider').value;
+            const renewable = document.getElementById('renewableSlider').value;
+            
+            alert(`🎯 Scenario Simulation Results:\n\n📊 Input Parameters:\n• CO₂ Change: ${co2Change}%\n• Deforestation: ${deforestation}%\n• Renewable Energy: ${renewable}%\n\n🌡️ Projected Impact:\n• Temperature: ${(25 + (co2Change * 0.02) + (deforestation * 0.01) - (renewable * 0.01)).toFixed(1)}°C\n• Flood Risk: ${Math.min(100, 65 + parseInt(co2Change) * 0.3 + parseInt(deforestation) * 0.2)}%\n• Overall Risk: ${renewable > 70 ? 'Reduced' : renewable > 40 ? 'Moderate' : 'Elevated'}`);
+        }
+
+        function generateFuturePrediction() {
+            const year = document.getElementById('targetYear').value;
+            const yearsAhead = year - 2024;
+            
+            const futureTemp = (25 + yearsAhead * 0.15).toFixed(1);
+            const futureRainfall = Math.max(50, 100 - yearsAhead * 0.8).toFixed(1);
+            const futureCO2 = (420 + yearsAhead * 2.5).toFixed(0);
+            
+            document.getElementById('futureResults').innerHTML = `
+                <h6>📊 Projected Conditions for ${year}</h6>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="text-center p-2 bg-light rounded">
+                            <div class="fw-bold">${futureTemp}°C</div>
+                            <small class="text-muted">Temperature</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center p-2 bg-light rounded">
+                            <div class="fw-bold">${futureRainfall}mm</div>
+                            <small class="text-muted">Rainfall</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center p-2 bg-light rounded">
+                            <div class="fw-bold">${futureCO2}ppm</div>
+                            <small class="text-muted">CO₂ Level</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center p-2 bg-light rounded">
+                            <div class="fw-bold">62%</div>
+                            <small class="text-muted">Humidity</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function testRealPrediction() {
+            const temp = document.getElementById('tempSlider').value;
+            const rainfall = document.getElementById('rainfallSlider').value;
+            const humidity = document.getElementById('humiditySlider').value;
+            const co2 = document.getElementById('co2Slider').value;
+            
+            try {
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        temperature: parseFloat(temp),
+                        rainfall: parseFloat(rainfall),
+                        humidity: parseFloat(humidity),
+                        co2_level: parseFloat(co2)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.predictions) {
+                    let message = '🤖 Real ML Model Results:\n\n';
+                    Object.entries(data.predictions).forEach(([risk, pred]) => {
+                        const prob = Math.round((pred.risk_probability || 0) * 100);
+                        const level = pred.risk_level || 'Unknown';
+                        message += `• ${risk.charAt(0).toUpperCase() + risk.slice(1)}: ${prob}% (${level})\n`;
+                    });
+                    alert(message);
+                } else {
+                    alert('✅ ML API connected successfully!\nUsing demo predictions for now.');
+                }
+            } catch (error) {
+                alert('⚠️ ML API not available.\nUsing demo predictions instead.');
+            }
+        }
+
+        // Initialize with default prediction
+        generatePrediction();
+    </script>
+</body>
+</html>

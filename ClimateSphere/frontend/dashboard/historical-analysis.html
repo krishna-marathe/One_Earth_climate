@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Analysis - ClimateSphere</title>
+    <meta name="description" content="Analyze historical climate data and trends across regions and time periods">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/historical-analysis.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <button class="back-btn" onclick="window.location.href='dashboard.html'" title="Back to Dashboard">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <i class="fas fa-globe-americas"></i>
+                <span>ClimateSphere</span>
+            </div>
+            <div class="nav-search">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search regions, data, insights..." id="searchInput">
+                </div>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" id="notificationBtn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">1</span>
+                </button>
+                <div class="user-menu">
+                    <button class="user-btn" id="userMenuBtn">
+                        <span>Demo User</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- Navigation Menu -->
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <a href="dashboard.html" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Overview</span>
+                        </a>
+                        <a href="upload.html" class="nav-item">
+                            <i class="fas fa-upload"></i>
+                            <span>Data Upload</span>
+                        </a>
+                        <a href="historical-analysis.html" class="nav-item active">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Historical Analysis</span>
+                            <div class="nav-submenu">
+                                <a href="#predictions" class="nav-subitem">Predictions</a>
+                            </div>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Insights</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Climate Models</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Export Data Section -->
+                <div class="export-section">
+                    <h4><i class="fas fa-download"></i> Export Data</h4>
+                    <button class="export-btn csv-btn" id="exportCsvBtn">
+                        <i class="fas fa-file-csv"></i>
+                        Download CSV
+                    </button>
+                    <button class="export-btn png-btn" id="exportPngBtn">
+                        <i class="fas fa-image"></i>
+                        Export Charts (PNG)
+                    </button>
+                    <button class="export-btn pdf-btn" id="exportPdfBtn">
+                        <i class="fas fa-file-pdf"></i>
+                        Export Report (PDF)
+                    </button>
+                </div>
+
+                <!-- Save Analysis Section -->
+                <div class="save-section">
+                    <h4><i class="fas fa-save"></i> Save Analysis</h4>
+                    <button class="save-btn current-btn" id="saveCurrentBtn">
+                        <i class="fas fa-bookmark"></i>
+                        Save Current Analysis
+                    </button>
+                    <button class="save-btn dashboard-btn" id="addToDashboardBtn">
+                        <i class="fas fa-plus"></i>
+                        Add to Dashboard
+                    </button>
+                </div>
+
+                <!-- Data Statistics -->
+                <div class="stats-section">
+                    <h4><i class="fas fa-chart-bar"></i> Data Statistics</h4>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalRecords">864</div>
+                        <div class="stat-label">Total Records</div>
+                        <div class="stat-period">2015-2023</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <div class="stat-number" id="avgTemp">25.6°C</div>
+                            <div class="stat-label">Avg Temperature</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="avgCo2">410 ppm</div>
+                            <div class="stat-label">Avg CO₂</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="fas fa-chart-line"></i>
+                        <h1>Historical Data Analysis</h1>
+                    </div>
+                    <p class="header-subtitle">Analyze historical climate data and trends across regions and time periods</p>
+                </div>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="regionSelect">Region</label>
+                    <select id="regionSelect" class="control-select">
+                        <option value="all">All Regions</option>
+                        <option value="north-america">North America</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="africa">Africa</option>
+                        <option value="south-america">South America</option>
+                        <option value="oceania">Oceania</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="startYear">Start Year</label>
+                    <select id="startYear" class="control-select">
+                        <option value="2015">2015</option>
+                        <option value="2016">2016</option>
+                        <option value="2017">2017</option>
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="endYear">End Year</label>
+                    <select id="endYear" class="control-select">
+                        <option value="2023" selected>2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                        <option value="2017">2017</option>
+                        <option value="2016">2016</option>
+                    </select>
+                </div>
+
+                <div class="data-types-panel">
+                    <h4>Data Types</h4>
+                    <div class="data-type-grid">
+                        <label class="data-type-item">
+                            <input type="checkbox" id="temperatureCheck" checked>
+                            <span class="checkmark"></span>
+                            <i class="fas fa-thermometer-half"></i>
+                            Temperature
+                        </label>
+                        <label class="data-type-item">
+                            <input type="checkbox" id="rainfallCheck" checked>
+                            <span class="checkmark"></span>
+                            <i class="fas fa-cloud-rain"></i>
+                            Rainfall
+                        </label>
+                        <label class="data-type-item">
+                            <input type="checkbox" id="co2Check" checked>
+                            <span class="checkmark"></span>
+                            <i class="fas fa-smog"></i>
+                            CO₂ Level
+                        </label>
+                        <label class="data-type-item">
+                            <input type="checkbox" id="humidityCheck">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-tint"></i>
+                            Humidity
+                        </label>
+                        <label class="data-type-item">
+                            <input type="checkbox" id="droughtCheck">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-sun"></i>
+                            Drought Index
+                        </label>
+                        <label class="data-type-item">
+                            <input type="checkbox" id="deforestationCheck">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-tree"></i>
+                            Deforestation
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Climate Trends Over Time</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn" id="fullscreenChart1">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="chart-btn" id="downloadChart1">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> CO₂ Levels by Year</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn" id="fullscreenChart2">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="chart-btn" id="downloadChart2">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="co2Chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Analysis Section -->
+            <div class="analysis-section">
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-thermometer-half"></i> Temperature Analysis</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric-row">
+                                <span class="metric-label">Average Temperature:</span>
+                                <span class="metric-value" id="avgTempMetric">25.6°C</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Temperature Range:</span>
+                                <span class="metric-value" id="tempRangeMetric">18.2°C - 32.1°C</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Trend:</span>
+                                <span class="metric-value trend-up" id="tempTrendMetric">
+                                    <i class="fas fa-arrow-up"></i> +1.2°C over period
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-cloud-rain"></i> Precipitation Analysis</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric-row">
+                                <span class="metric-label">Average Rainfall:</span>
+                                <span class="metric-value" id="avgRainfallMetric">1,245 mm/year</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Wettest Year:</span>
+                                <span class="metric-value" id="wettestYearMetric">2019 (1,456 mm)</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Trend:</span>
+                                <span class="metric-value trend-down" id="rainfallTrendMetric">
+                                    <i class="fas fa-arrow-down"></i> -5.2% over period
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-smog"></i> CO₂ Analysis</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric-row">
+                                <span class="metric-label">Average CO₂:</span>
+                                <span class="metric-value" id="avgCo2Metric">410 ppm</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Peak Level:</span>
+                                <span class="metric-value" id="peakCo2Metric">425 ppm (2023)</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Trend:</span>
+                                <span class="metric-value trend-up" id="co2TrendMetric">
+                                    <i class="fas fa-arrow-up"></i> +2.1 ppm/year
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-chart-line fa-spin"></i>
+            <p>Analyzing historical data...</p>
+        </div>
+    </div>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/assets/js/utils.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="assets/js/historical-analysis.js"></script>
+</body>
+</html>

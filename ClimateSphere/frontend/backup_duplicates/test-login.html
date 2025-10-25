@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <h2>Quick Login Test</h2>
+    <p>Test the demo login functionality:</p>
+    
+    <form id="testForm">
+        <div>
+            <label>Email:</label>
+            <input type="email" id="testEmail" value="demo@test.com" />
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" id="testPassword" value="password123" />
+        </div>
+        <button type="submit">Test Login</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            // Simulate the login process
+            if (email && password) {
+                const demoUser = { id: 1, name: 'Demo User', email: email };
+                const demoToken = 'demo_token_' + Date.now();
+                
+                localStorage.setItem('cs_token', demoToken);
+                localStorage.setItem('cs_user', JSON.stringify(demoUser));
+                
+                document.getElementById('result').innerHTML = `
+                    <h3 style="color: green;">✅ Login Test Successful!</h3>
+                    <p>Token: ${demoToken}</p>
+                    <p>User: ${JSON.stringify(demoUser)}</p>
+                    <p><a href="../dashboard/dashboard.html">Go to Dashboard</a></p>
+                `;
+                
+                console.log('Demo login successful — redirected to dashboard.');
+            } else {
+                document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">❌ Login Test Failed</h3>
+                    <p>Please fill in both email and password</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

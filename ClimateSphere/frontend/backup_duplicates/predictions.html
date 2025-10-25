@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">🌍 ClimateSphere</a>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">👤 User</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="dashboard.html">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="upload.html">Upload Data</a></li>
+                        <li><a class="dropdown-item" href="analysis.html">Analysis</a></li>
+                        <li><a class="dropdown-item" href="insights.html">AI Insights</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item logout-btn" href="#">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h5>🔮 Predictions</h5>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link">
+                    <span class="nav-icon">🏠</span>Overview
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <span class="nav-icon">📤</span>Upload Data
+                </a>
+                <a href="analysis.html" class="nav-link">
+                    <span class="nav-icon">📈</span>Analysis
+                </a>
+                <a href="predictions.html" class="nav-link active">
+                    <span class="nav-icon">🔮</span>Predictions
+                </a>
+                <a href="insights.html" class="nav-link">
+                    <span class="nav-icon">💡</span>AI Insights
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">🔮 Climate Risk Predictions</h2>
+                </div>
+            </div>
+
+            <!-- Prediction Controls -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="control-card">
+                        <h5>🎛️ Input Parameters</h5>
+                        <form id="predictionForm">
+                            <div class="mb-3">
+                                <label class="form-label">🌡️ Temperature (°C)</label>
+                                <input type="range" class="form-range" id="tempSlider" min="0" max="50" value="25">
+                                <div class="d-flex justify-content-between">
+                                    <small>0°C</small>
+                                    <span id="tempValue" class="fw-bold">25°C</span>
+                                    <small>50°C</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">🌧️ Rainfall (mm)</label>
+                                <input type="range" class="form-range" id="rainfallSlider" min="0" max="300" value="100">
+                                <div class="d-flex justify-content-between">
+                                    <small>0mm</small>
+                                    <span id="rainfallValue" class="fw-bold">100mm</span>
+                                    <small>300mm</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">💧 Humidity (%)</label>
+                                <input type="range" class="form-range" id="humiditySlider" min="0" max="100" value="60">
+                                <div class="d-flex justify-content-between">
+                                    <small>0%</small>
+                                    <span id="humidityValue" class="fw-bold">60%</span>
+                                    <small>100%</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">💨 CO₂ Level (ppm)</label>
+                                <input type="range" class="form-range" id="co2Slider" min="300" max="600" value="420">
+                                <div class="d-flex justify-content-between">
+                                    <small>300ppm</small>
+                                    <span id="co2Value" class="fw-bold">420ppm</span>
+                                    <small>600ppm</small>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                🔮 Generate Predictions
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="prediction-results" id="predictionResults">
+                        <h5>📊 Risk Assessment Results</h5>
+                        <div class="row g-3" id="riskCards">
+                            <div class="col-md-4">
+                                <div class="risk-card flood">
+                                    <div class="risk-icon">🌊</div>
+                                    <h6>Flood Risk</h6>
+                                    <div class="risk-percentage" id="floodRisk">--%</div>
+                                    <div class="risk-level" id="floodLevel">Unknown</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="risk-card drought">
+                                    <div class="risk-icon">🏜️</div>
+                                    <h6>Drought Risk</h6>
+                                    <div class="risk-percentage" id="droughtRisk">--%</div>
+                                    <div class="risk-level" id="droughtLevel">Unknown</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="risk-card heatwave">
+                                    <div class="risk-icon">🌡️</div>
+                                    <h6>Heatwave Risk</h6>
+                                    <div class="risk-percentage" id="heatwaveRisk">--%</div>
+                                    <div class="risk-level" id="heatwaveLevel">Unknown</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario Simulation -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="scenario-card">
+                        <h5>🎯 Scenario Simulation</h5>
+                        <p class="text-muted">Explore "what-if" scenarios by adjusting environmental factors</p>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <label class="form-label">🏭 CO₂ Change (%)</label>
+                                <input type="range" class="form-range" id="co2ChangeSlider" min="-50" max="100" value="0">
+                                <div class="d-flex justify-content-between">
+                                    <small>-50%</small>
+                                    <span id="co2ChangeValue" class="fw-bold">0%</span>
+                                    <small>+100%</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">🌳 Deforestation (%)</label>
+                                <input type="range" class="form-range" id="deforestationSlider" min="0" max="100" value="0">
+                                <div class="d-flex justify-content-between">
+                                    <small>0%</small>
+                                    <span id="deforestationValue" class="fw-bold">0%</span>
+                                    <small>100%</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">⚡ Renewable Energy (%)</label>
+                                <input type="range" class="form-range" id="renewableSlider" min="0" max="100" value="50">
+                                <div class="d-flex justify-content-between">
+                                    <small>0%</small>
+                                    <span id="renewableValue" class="fw-bold">50%</span>
+                                    <small>100%</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-success" onclick="runScenarioSimulation()">
+                                🎯 Run Scenario
+                            </button>
+                        </div>
+                        
+                        <div class="scenario-results mt-4" id="scenarioResults" style="display: none;">
+                            <h6>📈 Scenario Impact</h6>
+                            <div class="row g-3" id="scenarioCards"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future Predictions -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="future-card">
+                        <h5>🔮 Future Climate Projections</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Target Year</label>
+                            <select class="form-select" id="targetYear">
+                                <option value="2025">2025</option>
+                                <option value="2030" selected>2030</option>
+                                <option value="2035">2035</option>
+                                <option value="2040">2040</option>
+                                <option value="2050">2050</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-info w-100" onclick="generateFuturePrediction()">
+                            🔮 Generate Future Prediction
+                        </button>
+                        
+                        <div class="future-results mt-4" id="futureResults" style="display: none;">
+                            <h6>📊 Projected Conditions</h6>
+                            <div id="futureConditions"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="model-card">
+                        <h5>🤖 Model Performance</h5>
+                        <div id="modelMetrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Flood Model Accuracy</span>
+                                <span class="metric-value">87%</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Drought Model Accuracy</span>
+                                <span class="metric-value">82%</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Heatwave Model Accuracy</span>
+                                <span class="metric-value">91%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mt-3" onclick="refreshModels()">
+                            🔄 Refresh Models
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/prediction.js"></script>
+</body>
+</html>

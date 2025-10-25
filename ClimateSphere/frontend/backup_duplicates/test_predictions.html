@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Predictions - ClimateSphere</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>🧪 Test ML Predictions</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>🎛️ Input Parameters</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Temperature (°C)</label>
+                            <input type="number" class="form-control" id="temperature" value="30">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rainfall (mm)</label>
+                            <input type="number" class="form-control" id="rainfall" value="50">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Humidity (%)</label>
+                            <input type="number" class="form-control" id="humidity" value="70">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CO₂ Level (ppm)</label>
+                            <input type="number" class="form-control" id="co2_level" value="450">
+                        </div>
+                        <button class="btn btn-primary" onclick="testPrediction()">
+                            🔮 Test Prediction
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📊 Prediction Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="results">
+                            <p class="text-muted">Click "Test Prediction" to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>🔗 Quick Links</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="index.html" class="btn btn-outline-primary me-2">🏠 Home</a>
+                        <a href="dashboard_simple.html" class="btn btn-outline-success me-2">📊 Dashboard</a>
+                        <a href="predictions.html" class="btn btn-outline-info me-2">🔮 Predictions</a>
+                        <a href="upload.html" class="btn btn-outline-warning">📤 Upload</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testPrediction() {
+            const temperature = document.getElementById('temperature').value;
+            const rainfall = document.getElementById('rainfall').value;
+            const humidity = document.getElementById('humidity').value;
+            const co2_level = document.getElementById('co2_level').value;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p>Testing prediction...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        temperature: parseFloat(temperature),
+                        rainfall: parseFloat(rainfall),
+                        humidity: parseFloat(humidity),
+                        co2_level: parseFloat(co2_level)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let html = '<h6>✅ Prediction Successful!</h6>';
+                    
+                    if (data.predictions) {
+                        Object.entries(data.predictions).forEach(([risk, prediction]) => {
+                            const prob = prediction.risk_probability || 0;
+                            const level = prediction.risk_level || 'Unknown';
+                            const percentage = Math.round(prob * 100);
+                            
+                            let badgeClass = 'secondary';
+                            if (level === 'High') badgeClass = 'danger';
+                            else if (level === 'Medium') badgeClass = 'warning';
+                            else if (level === 'Low') badgeClass = 'success';
+                            
+                            html += `
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>${risk.charAt(0).toUpperCase() + risk.slice(1)} Risk:</span>
+                                    <div>
+                                        <span class="badge bg-${badgeClass}">${percentage}% (${level})</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    html += `<small class="text-muted">Timestamp: ${data.timestamp}</small>`;
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="alert alert-danger">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testPrediction, 1000);
+        });
+    </script>
+</body>
+</html>

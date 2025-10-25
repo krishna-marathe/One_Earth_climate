@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real AI Analysis</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Real AI Analysis Test</h1>
+    
+    <div class="test-section">
+        <h3>1. API Connection Test</h3>
+        <button onclick="testAPIConnection()">Test API</button>
+        <div id="apiResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Data Processing Test</h3>
+        <button onclick="testDataProcessing()">Test Data Processing</button>
+        <div id="dataResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Full AI Analysis Test</h3>
+        <button onclick="testFullAnalysis()">Run Full Analysis</button>
+        <div id="analysisResult" class="result"></div>
+    </div>
+
+    <!-- Load the real AI analysis modules -->
+    <script src="data-processor.js"></script>
+    <script src="model-runner.js"></script>
+    <script src="ui-manager.js"></script>
+    <script src="ai-analysis-main.js"></script>
+
+    <script>
+        async function testAPIConnection() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '⏳ Testing API connection...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/health');
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    resultDiv.innerHTML = `✅ API Connected! Models loaded: ${data.models_loaded.join(', ')}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = '❌ API unhealthy';
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ API Connection Failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testDataProcessing() {
+            const resultDiv = document.getElementById('dataResult');
+            resultDiv.innerHTML = '⏳ Testing data processing...';
+            
+            try {
+                // Generate sample data
+                const sampleData = window.DataProcessor.generateSampleData();
+                const metrics = window.DataProcessor.extractMetrics(sampleData);
+                
+                resultDiv.innerHTML = `✅ Data Processing Works!<br>
+                    Records: ${sampleData.length}<br>
+                    Avg Temperature: ${metrics.temperature.average.toFixed(1)}°C<br>
+                    Total Rainfall: ${metrics.rainfall.total.toFixed(1)}mm<br>
+                    Avg Humidity: ${metrics.humidity.average.toFixed(1)}%`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Data Processing Failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testFullAnalysis() {
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.innerHTML = '⏳ Running full AI analysis...';
+            
+            try {
+                // Generate test data
+                const testData = window.DataProcessor.generateSampleData();
+                
+                // Run AI models
+                const results = await window.ModelRunner.runAllModels(testData);
+                
+                // Display results
+                const models = results.models;
+                let output = '✅ Full AI Analysis Complete!<br><br>';
+                
+                Object.keys(models).forEach(modelName => {
+                    const model = models[modelName];
+                    output += `<strong>${modelName.toUpperCase()}:</strong> ${model.risk_level || 'Unknown'} Risk (${((model.risk_probability || 0) * 100).toFixed(1)}%)<br>`;
+                });
+                
+                output += `<br><strong>Data Points:</strong> ${results.dataPoints}<br>`;
+                output += `<strong>Temperature Range:</strong> ${results.metrics.temperature.min.toFixed(1)}°C - ${results.metrics.temperature.max.toFixed(1)}°C<br>`;
+                output += `<strong>Total Rainfall:</strong> ${results.metrics.rainfall.total.toFixed(1)}mm`;
+                
+                resultDiv.innerHTML = output;
+                resultDiv.className = 'result success';
+                
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Full Analysis Failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>

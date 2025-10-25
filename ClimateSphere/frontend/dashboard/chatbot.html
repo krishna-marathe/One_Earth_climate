@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Climate Assistant - ClimateSphere</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    
+    <style>
+        .chatbot-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            height: calc(100vh - 140px);
+        }
+        
+        .chat-main {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .chat-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .message.user .message-avatar {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+        
+        .message.bot .message-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            color: #64748b;
+            font-style: italic;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #94a3b8;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        
+        .chat-input-area {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 22px;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            transition: border-color 0.2s ease;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .send-button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .sidebar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .sidebar-card h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            color: #374151;
+        }
+        
+        .quick-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .quick-question {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        
+        .quick-question:hover {
+            background: #eef2ff;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+        
+        .context-info {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+        
+        .context-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .context-item i {
+            color: #10b981;
+        }
+        
+        .prediction-summary {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .prediction-value {
+            font-weight: 600;
+            color: #0369a1;
+        }
+        
+        @media (max-width: 1024px) {
+            .chatbot-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .chat-main {
+                height: 70vh;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .chatbot-container {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <button class="sidebar-toggle" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="header-brand">
+                <i class="fas fa-robot"></i>
+                <span>AI Climate Assistant</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="margin-top: 70px;">
+        <div class="chatbot-container">
+            <!-- Chat Main Area -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <h1><i class="fas fa-robot"></i> Climate Intelligence Assistant</h1>
+                    <p>Ask me anything about climate predictions, data analysis, and environmental insights</p>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome message -->
+                    <div class="message bot">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div>Hello! I'm your AI Climate Assistant. I can help you with:</div>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                                <li>Climate predictions and forecasts</li>
+                                <li>Data analysis and insights</li>
+                                <li>Risk assessments</li>
+                                <li>Environmental recommendations</li>
+                                <li>Scenario modeling</li>
+                            </ul>
+                            <div>What would you like to know?</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <i class="fas fa-robot"></i>
+                    <span>AI is thinking</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="chat-input-container">
+                        <textarea 
+                            class="chat-input" 
+                            id="chatInput" 
+                            placeholder="Ask about climate predictions, data analysis, or environmental insights..."
+                            rows="1"></textarea>
+                        <button class="send-button" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="chat-sidebar">
+                <!-- Quick Questions -->
+                <div class="sidebar-card">
+                    <h3><i class="fas fa-lightning-bolt"></i> Quick Questions</h3>
+                    <div class="quick-questions">
+                        <button class="quick-question" data-question="What will the temperature be like in 5 years?">
+                            What will the temperature be like in 5 years?
+                        </button>
+                        <button class="quick-question" data-question="What are the flood risks in my area?">
+                            What are the flood risks in my area?
+                        </button>
+                        <button class="quick-question" data-question="How does CO2 affect climate change?">
+                            How does CO2 affect climate change?
+                        </button>
+                        <button class="quick-question" data-question="What can I do to reduce environmental impact?">
+                            What can I do to reduce environmental impact?
+                        </button>
+                        <button class="quick-question" data-question="Explain the latest climate data trends">
+                            Explain the latest climate data trends
+                        </button>
+                        <button class="quick-question" data-question="Generate a climate risk report">
+                            Generate a climate risk report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Context Information -->
+                <div class="sidebar-card">
+                    <h3><i class="fas fa-info-circle"></i> Current Context</h3>
+                    <div class="context-info">
+                        <div class="context-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Climate data loaded</span>
+                        </div>
+                        <div class="context-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>ML models active</span>
+                        </div>
+                        <div class="context-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Real-time analysis ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-summary" id="predictionSummary">
+                        <strong>Latest Predictions:</strong>
+                        <div class="prediction-item">
+                            <span>Flood Risk:</span>
+                            <span class="prediction-value">30%</span>
+                        </div>
+                        <div class="prediction-item">
+                            <span>Drought Risk:</span>
+                            <span class="prediction-value">25%</span>
+                        </div>
+                        <div class="prediction-item">
+                            <span>Heat Risk:</span>
+                            <span class="prediction-value">45%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="sidebar-card">
+                    <h3><i class="fas fa-tools"></i> Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <button class="btn btn-primary" onclick="clearChat()">
+                            <i class="fas fa-trash"></i>
+                            Clear Chat
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportChat()">
+                            <i class="fas fa-download"></i>
+                            Export Chat
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareInsights()">
+                            <i class="fas fa-share"></i>
+                            Share Insights
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+    
+    <!-- Chatbot Script -->
+    <script src="assets/js/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+ClimateSphere Backup & Duplicate Cleanup Log
+============================================
+Timestamp: 2025-10-23 15:37:50
+Operation: Move duplicate files matching patterns: *_simple.html, *_backup.html, *-copy.html, *_old.html, *_v1.html
+
+Files Moved:
+-----------
+frontend/backup_duplicates/dashboard_simple.html -> backup_duplicates_20251023_153750/frontend/backup_duplicates/dashboard_simple.html
+frontend/backup_duplicates/predictions_simple.html -> backup_duplicates_20251023_153750/frontend/backup_duplicates/predictions_simple.html
+frontend/backup_duplicates/upload_simple.html -> backup_duplicates_20251023_153750/frontend/backup_duplicates/upload_simple.html
+
+Total Files Moved: 3
+Backup Location: backup_duplicates_20251023_153750/
+
+Patterns Searched:
+- *_simple.html (3 matches found and moved)
+- *_backup.html (0 matches found)
+- *-copy.html (0 matches found)
+- *_old.html (0 matches found)
+- *_v1.html (0 matches found)
+
+Status: COMPLETED SUCCESSFULLY

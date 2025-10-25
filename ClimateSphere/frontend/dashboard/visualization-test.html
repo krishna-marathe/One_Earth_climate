@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization Test - ClimateSphere</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            margin: 2rem 0;
+            height: 400px;
+            position: relative;
+        }
+        .status {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>ClimateSphere Chart Test</h1>
+        <p>Testing Chart.js integration and visualization capabilities</p>
+        
+        <div id="status" class="status info">Initializing tests...</div>
+        
+        <div>
+            <button onclick="testBasicChart()">Test Basic Chart</button>
+            <button onclick="testTimeSeriesChart()">Test Time Series</button>
+            <button onclick="testMultipleCharts()">Test Multiple Charts</button>
+            <button onclick="clearCharts()">Clear All</button>
+        </div>
+        
+        <div id="chartContainer"></div>
+    </div>
+
+    <script>
+        let chartInstances = [];
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function clearCharts() {
+            chartInstances.forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            chartInstances = [];
+            document.getElementById('chartContainer').innerHTML = '';
+            updateStatus('All charts cleared', 'info');
+        }
+        
+        function createChartCanvas(id, title) {
+            const container = document.getElementById('chartContainer');
+            const chartDiv = document.createElement('div');
+            chartDiv.className = 'chart-container';
+            chartDiv.innerHTML = `
+                <h3>${title}</h3>
+                <canvas id="${id}" width="400" height="200"></canvas>
+            `;
+            container.appendChild(chartDiv);
+            return document.getElementById(id);
+        }
+        
+        function testBasicChart() {
+            try {
+                updateStatus('Creating basic chart...', 'info');
+                
+                const canvas = createChartCanvas('basicChart', 'Basic Line Chart');
+                const ctx = canvas.getContext('2d');
+                
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Temperature',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Sample Temperature Data'
+                            }
+                        }
+                    }
+                });
+                
+                chartInstances.push(chart);
+                updateStatus('✓ Basic chart created successfully!', 'success');
+                
+            } catch (error) {
+                updateStatus(`✗ Basic chart failed: ${error.message}`, 'error');
+                console.error('Basic chart error:', error);
+            }
+        }
+        
+        function testTimeSeriesChart() {
+            try {
+                updateStatus('Creating time series chart...', 'info');
+                
+                const canvas = createChartCanvas('timeChart', 'Time Series Chart');
+                const ctx = canvas.getContext('2d');
+                
+                // Generate time series data
+                const data = [];
+                const startDate = new Date('2024-01-01');
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + i);
+                    data.push({
+                        x: date,
+                        y: 20 + Math.sin(i * 0.2) * 10 + Math.random() * 5
+                    });
+                }
+                
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: 'Temperature Over Time',
+                            data: data,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Temperature (°C)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                chartInstances.push(chart);
+                updateStatus('✓ Time series chart created successfully!', 'success');
+                
+            } catch (error) {
+                updateStatus(`✗ Time series chart failed: ${error.message}`, 'error');
+                console.error('Time series chart error:', error);
+            }
+        }
+        
+        function testMultipleCharts() {
+            try {
+                updateStatus('Creating multiple charts...', 'info');
+                
+                // Bar Chart
+                const barCanvas = createChartCanvas('barChart', 'Bar Chart - Climate Variables');
+                const barCtx = barCanvas.getContext('2d');
+                
+                const barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Temperature', 'Humidity', 'Rainfall', 'Wind Speed'],
+                        datasets: [{
+                            label: 'Average Values',
+                            data: [25, 65, 45, 12],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                // Doughnut Chart
+                const doughnutCanvas = createChartCanvas('doughnutChart', 'Doughnut Chart - Risk Assessment');
+                const doughnutCtx = doughnutCanvas.getContext('2d');
+                
+                const doughnutChart = new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                        datasets: [{
+                            data: [60, 30, 10],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(255, 206, 86, 0.8)',
+                                'rgba(255, 99, 132, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                chartInstances.push(barChart, doughnutChart);
+                updateStatus('✓ Multiple charts created successfully!', 'success');
+                
+            } catch (error) {
+                updateStatus(`✗ Multiple charts failed: ${error.message}`, 'error');
+                console.error('Multiple charts error:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Chart !== 'undefined') {
+                updateStatus('✓ Chart.js loaded successfully. Ready for testing!', 'success');
+            } else {
+                updateStatus('✗ Chart.js not loaded. Check internet connection.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

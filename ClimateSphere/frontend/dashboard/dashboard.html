@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ClimateSphere</title>
+    <meta name="description" content="ClimateSphere climate intelligence dashboard">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css">
+    
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-brand">
+                <i class="fas fa-globe-americas"></i>
+                <span>ClimateSphere</span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search regions, data, insights..." id="globalSearch">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="header-btn" id="notificationsBtn" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            
+            <div class="user-menu">
+                <button class="user-avatar" id="userMenuBtn" aria-label="User menu">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name" id="userName">Demo User</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <button class="nav-link active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </button>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="nav-link" data-section="upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Data Upload</span>
+                    </button>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="nav-link" data-section="analysis">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Historical Analysis</span>
+                    </button>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="nav-link" data-section="predictions">
+                        <i class="fas fa-crystal-ball"></i>
+                        <span>Predictions</span>
+                    </button>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="nav-link" data-section="insights">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Insights</span>
+                    </button>
+                </li>
+                
+                <li class="nav-item">
+                    <button class="nav-link" data-section="modules">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span>Climate Modules</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="demo-indicator">
+                <i class="fas fa-flask"></i>
+                <span>Demo Mode</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Overview Section (Default) -->
+        <section class="content-section active" id="overview-section">
+            <div class="section-header">
+                <h1>Climate Overview</h1>
+                <p id="regionFilter">Global climate intelligence dashboard</p>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon co2">
+                        <i class="fas fa-smog"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="overviewCo2">421.3 ppm</h3>
+                        <p class="stat-label">CO2 Level</p>
+                        <span class="stat-trend up">+2.1 ppm</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon temp">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="overviewTemp">15.2°C</h3>
+                        <p class="stat-label">Avg Temperature</p>
+                        <span class="stat-trend up">+1.1°C</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon zones">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="overviewZones">23</h3>
+                        <p class="stat-label">Active Zones</p>
+                        <span class="stat-trend up">+5</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon alerts">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="overviewAlerts">47</h3>
+                        <p class="stat-label">Active Alerts</p>
+                        <span class="stat-trend down">-3</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Global Climate Analysis Charts -->
+            <div class="charts-section">
+                <h2>Global Climate Analysis - Daily Averages</h2>
+                <div class="date-selector">
+                    <label for="analysisDate">Select Date:</label>
+                    <input type="date" id="analysisDate" class="date-input">
+                    <button class="btn btn-primary" id="updateChartsBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Update Analysis
+                    </button>
+                    <div class="last-updated">
+                        Last updated: Loading...
+                    </div>
+                    <button class="btn btn-secondary" onclick="window.initializeClimateCharts && window.initializeClimateCharts()">
+                        🔧 Debug: Initialize Charts
+                    </button>
+                    <button class="btn btn-outline" onclick="window.navigateToSection && window.navigateToSection('upload')">
+                        📤 Test: Go to Upload
+                    </button>
+                </div>
+                
+                <div class="charts-grid">
+                    <!-- Temperature Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-thermometer-half"></i> Global Average Temperature</h3>
+                            <div class="chart-value">
+                                <span id="tempValue">15.2°C</span>
+                                <span class="trend-indicator" id="tempTrend">+1.1°C</span>
+                            </div>
+                        </div>
+                        <canvas id="temperatureChart"></canvas>
+                        <div class="chart-stats">
+                            <div class="stat-item">
+                                <span class="label">Min:</span>
+                                <span id="tempMin">-12.5°C</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Max:</span>
+                                <span id="tempMax">42.8°C</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Variance:</span>
+                                <span id="tempVariance">±8.3°C</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rainfall Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-cloud-rain"></i> Global Average Rainfall</h3>
+                            <div class="chart-value">
+                                <span id="rainfallValue">2.8mm</span>
+                                <span class="trend-indicator down" id="rainfallTrend">-0.3mm</span>
+                            </div>
+                        </div>
+                        <canvas id="rainfallChart"></canvas>
+                        <div class="chart-stats">
+                            <div class="stat-item">
+                                <span class="label">Min:</span>
+                                <span id="rainfallMin">0.0mm</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Max:</span>
+                                <span id="rainfallMax">45.2mm</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Total:</span>
+                                <span id="rainfallTotal">84.6mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Heat Index Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-fire"></i> Global Heat Index</h3>
+                            <div class="chart-value">
+                                <span id="heatValue">28.4°C</span>
+                                <span class="trend-indicator" id="heatTrend">+2.1°C</span>
+                            </div>
+                        </div>
+                        <canvas id="heatChart"></canvas>
+                        <div class="chart-stats">
+                            <div class="stat-item">
+                                <span class="label">Extreme:</span>
+                                <span id="heatExtreme">52.1°C</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Moderate:</span>
+                                <span id="heatModerate">31.2°C</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Safe:</span>
+                                <span id="heatSafe">18.7°C</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Humidity Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-tint"></i> Global Average Humidity</h3>
+                            <div class="chart-value">
+                                <span id="humidityValue">67.3%</span>
+                                <span class="trend-indicator" id="humidityTrend">+1.8%</span>
+                            </div>
+                        </div>
+                        <canvas id="humidityChart"></canvas>
+                        <div class="chart-stats">
+                            <div class="stat-item">
+                                <span class="label">Min:</span>
+                                <span id="humidityMin">15.2%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Max:</span>
+                                <span id="humidityMax">98.7%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Optimal:</span>
+                                <span id="humidityOptimal">45-65%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regional Breakdown -->
+                <div class="regional-analysis">
+                    <h3>Regional Climate Breakdown</h3>
+                    <div class="regions-grid">
+                        <div class="region-card">
+                            <h4><i class="fas fa-globe-americas"></i> Americas</h4>
+                            <div class="region-stats">
+                                <div class="region-stat">
+                                    <span class="label">Temp:</span>
+                                    <span class="value">16.8°C</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Rain:</span>
+                                    <span class="value">3.2mm</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Humidity:</span>
+                                    <span class="value">71%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="region-card">
+                            <h4><i class="fas fa-globe-europe"></i> Europe</h4>
+                            <div class="region-stats">
+                                <div class="region-stat">
+                                    <span class="label">Temp:</span>
+                                    <span class="value">12.4°C</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Rain:</span>
+                                    <span class="value">2.1mm</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Humidity:</span>
+                                    <span class="value">68%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="region-card">
+                            <h4><i class="fas fa-globe-asia"></i> Asia</h4>
+                            <div class="region-stats">
+                                <div class="region-stat">
+                                    <span class="label">Temp:</span>
+                                    <span class="value">18.9°C</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Rain:</span>
+                                    <span class="value">4.1mm</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Humidity:</span>
+                                    <span class="value">74%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="region-card">
+                            <h4><i class="fas fa-globe-africa"></i> Africa</h4>
+                            <div class="region-stats">
+                                <div class="region-stat">
+                                    <span class="label">Temp:</span>
+                                    <span class="value">24.7°C</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Rain:</span>
+                                    <span class="value">1.8mm</span>
+                                </div>
+                                <div class="region-stat">
+                                    <span class="label">Humidity:</span>
+                                    <span class="value">58%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" data-action="upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Upload Data
+                </button>
+                <button class="btn btn-secondary" data-action="analyze">
+                    <i class="fas fa-chart-line"></i>
+                    Analyze Trends
+                </button>
+                <button class="btn btn-secondary" data-action="predict">
+                    <i class="fas fa-crystal-ball"></i>
+                    Generate Predictions
+                </button>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <h2>Recent Activity</h2>
+                <div class="activity-list" id="activityList">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="content-section" id="upload-section">
+            <div class="section-header">
+                <h1>Data Upload & Analysis</h1>
+                <p>Upload climate data files and get AI-powered analysis using our trained models</p>
+            </div>
+            
+            <!-- Upload Area -->
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop files here or click to browse</h3>
+                    <p>Supported formats: CSV, JSON, Excel (.xlsx)</p>
+                    <div class="file-requirements">
+                        <h4>📋 Required Data Columns:</h4>
+                        <div class="requirements-grid">
+                            <div class="req-item">
+                                <i class="fas fa-thermometer-half"></i>
+                                <span>Temperature (°C)</span>
+                            </div>
+                            <div class="req-item">
+                                <i class="fas fa-tint"></i>
+                                <span>Humidity (%)</span>
+                            </div>
+                            <div class="req-item">
+                                <i class="fas fa-cloud-rain"></i>
+                                <span>Rainfall (mm)</span>
+                            </div>
+                            <div class="req-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Date/Time</span>
+                            </div>
+                            <div class="req-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Location (optional)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".csv,.json,.xlsx" hidden>
+                    <button class="btn btn-primary" id="browseBtn">
+                        <i class="fas fa-upload"></i>
+                        Browse Files
+                    </button>
+                </div>
+                
+                <div class="upload-progress" id="uploadProgress">
+                    <!-- Progress bars will be added dynamically -->
+                </div>
+            </div>
+
+            <!-- Model Selection -->
+            <div class="model-selection" id="modelSelection" style="display: none;">
+                <h3>🤖 Select Analysis Models</h3>
+                <p>Choose which trained models to use for analyzing your data:</p>
+                <div class="models-grid">
+                    <div class="model-card" data-model="1">
+                        <div class="model-header">
+                            <i class="fas fa-water"></i>
+                            <h4>Model 1: Flood Risk Prediction</h4>
+                        </div>
+                        <p>Analyzes rainfall patterns and terrain data to predict flood risks and water accumulation zones.</p>
+                        <div class="model-accuracy">
+                            <span class="accuracy-label">Accuracy:</span>
+                            <span class="accuracy-value">94.2%</span>
+                        </div>
+                        <label class="model-checkbox">
+                            <input type="checkbox" name="models" value="flood" checked>
+                            <span class="checkmark"></span>
+                            Use this model
+                        </label>
+                    </div>
+                    
+                    <div class="model-card" data-model="2">
+                        <div class="model-header">
+                            <i class="fas fa-sun"></i>
+                            <h4>Model 2: Drought Analysis</h4>
+                        </div>
+                        <p>Evaluates temperature, humidity, and precipitation data to assess drought conditions and severity.</p>
+                        <div class="model-accuracy">
+                            <span class="accuracy-label">Accuracy:</span>
+                            <span class="accuracy-value">91.8%</span>
+                        </div>
+                        <label class="model-checkbox">
+                            <input type="checkbox" name="models" value="drought" checked>
+                            <span class="checkmark"></span>
+                            Use this model
+                        </label>
+                    </div>
+                    
+                    <div class="model-card" data-model="3">
+                        <div class="model-header">
+                            <i class="fas fa-thermometer-full"></i>
+                            <h4>Model 3: Heatwave Detection</h4>
+                        </div>
+                        <p>Identifies extreme temperature patterns and predicts heatwave events with duration estimates.</p>
+                        <div class="model-accuracy">
+                            <span class="accuracy-label">Accuracy:</span>
+                            <span class="accuracy-value">96.5%</span>
+                        </div>
+                        <label class="model-checkbox">
+                            <input type="checkbox" name="models" value="heatwave" checked>
+                            <span class="checkmark"></span>
+                            Use this model
+                        </label>
+                    </div>
+                    
+                    <div class="model-card" data-model="4">
+                        <div class="model-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Model 4: Climate Trend Analysis</h4>
+                        </div>
+                        <p>Performs comprehensive climate trend analysis and long-term pattern recognition.</p>
+                        <div class="model-accuracy">
+                            <span class="accuracy-label">Accuracy:</span>
+                            <span class="accuracy-value">89.7%</span>
+                        </div>
+                        <label class="model-checkbox">
+                            <input type="checkbox" name="models" value="trends" checked>
+                            <span class="checkmark"></span>
+                            Use this model
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="analysis-options">
+                    <h4>📊 Analysis Options</h4>
+                    <div class="options-grid">
+                        <label class="option-checkbox">
+                            <input type="checkbox" name="options" value="visualization" checked>
+                            <span class="checkmark"></span>
+                            Generate visualizations
+                        </label>
+                        <label class="option-checkbox">
+                            <input type="checkbox" name="options" value="report" checked>
+                            <span class="checkmark"></span>
+                            Create detailed report
+                        </label>
+                        <label class="option-checkbox">
+                            <input type="checkbox" name="options" value="predictions" checked>
+                            <span class="checkmark"></span>
+                            Future predictions
+                        </label>
+                        <label class="option-checkbox">
+                            <input type="checkbox" name="options" value="alerts" checked>
+                            <span class="checkmark"></span>
+                            Risk alerts
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary btn-large" id="startAnalysisBtn">
+                    <i class="fas fa-play"></i>
+                    Start Analysis
+                </button>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="analysis-results" id="analysisResults" style="display: none;">
+                <h3>📈 Analysis Results</h3>
+                
+                <!-- Analysis Progress -->
+                <div class="analysis-progress" id="analysisProgress">
+                    <div class="progress-header">
+                        <h4>🔄 Running Analysis...</h4>
+                        <span class="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="analysisProgressFill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="step active" data-step="1">
+                            <i class="fas fa-upload"></i>
+                            <span>Data Processing</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <i class="fas fa-cogs"></i>
+                            <span>Model Analysis</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Generating Results</span>
+                        </div>
+                        <div class="step" data-step="4">
+                            <i class="fas fa-check"></i>
+                            <span>Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Summary -->
+                <div class="results-summary" id="resultsSummary" style="display: none;">
+                    <div class="summary-cards">
+                        <div class="summary-card risk-high">
+                            <div class="card-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>High Risk Events</h4>
+                                <span class="card-value" id="highRiskCount">0</span>
+                                <p>Critical weather events detected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-card risk-medium">
+                            <div class="card-icon">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Medium Risk Events</h4>
+                                <span class="card-value" id="mediumRiskCount">0</span>
+                                <p>Moderate weather events detected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-card confidence">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Analysis Confidence</h4>
+                                <span class="card-value" id="confidenceScore">0%</span>
+                                <p>Overall prediction accuracy</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-card data-points">
+                            <div class="card-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>Data Points</h4>
+                                <span class="card-value" id="dataPointsCount">0</span>
+                                <p>Records processed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Results -->
+                <div class="model-results" id="modelResults" style="display: none;">
+                    <div class="results-tabs">
+                        <button class="tab-btn active" data-tab="flood">
+                            <i class="fas fa-water"></i>
+                            Flood Risk
+                        </button>
+                        <button class="tab-btn" data-tab="drought">
+                            <i class="fas fa-sun"></i>
+                            Drought Analysis
+                        </button>
+                        <button class="tab-btn" data-tab="heatwave">
+                            <i class="fas fa-thermometer-full"></i>
+                            Heatwave Detection
+                        </button>
+                        <button class="tab-btn" data-tab="trends">
+                            <i class="fas fa-chart-line"></i>
+                            Climate Trends
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <!-- Flood Risk Results -->
+                        <div class="tab-pane active" id="flood-results">
+                            <div class="result-header">
+                                <h4>🌊 Flood Risk Analysis</h4>
+                                <span class="model-badge">Model 1</span>
+                            </div>
+                            <div class="result-chart">
+                                <canvas id="floodRiskChart"></canvas>
+                            </div>
+                            <div class="result-insights">
+                                <div class="insight-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="floodInsight">Analysis in progress...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Drought Analysis Results -->
+                        <div class="tab-pane" id="drought-results">
+                            <div class="result-header">
+                                <h4>🏜️ Drought Analysis</h4>
+                                <span class="model-badge">Model 2</span>
+                            </div>
+                            <div class="result-chart">
+                                <canvas id="droughtAnalysisChart"></canvas>
+                            </div>
+                            <div class="result-insights">
+                                <div class="insight-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="droughtInsight">Analysis in progress...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Heatwave Detection Results -->
+                        <div class="tab-pane" id="heatwave-results">
+                            <div class="result-header">
+                                <h4>🔥 Heatwave Detection</h4>
+                                <span class="model-badge">Model 3</span>
+                            </div>
+                            <div class="result-chart">
+                                <canvas id="heatwaveChart"></canvas>
+                            </div>
+                            <div class="result-insights">
+                                <div class="insight-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="heatwaveInsight">Analysis in progress...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Climate Trends Results -->
+                        <div class="tab-pane" id="trends-results">
+                            <div class="result-header">
+                                <h4>📊 Climate Trends</h4>
+                                <span class="model-badge">Model 4</span>
+                            </div>
+                            <div class="result-chart">
+                                <canvas id="trendsChart"></canvas>
+                            </div>
+                            <div class="result-insights">
+                                <div class="insight-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="trendsInsight">Analysis in progress...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="results-actions" id="resultsActions" style="display: none;">
+                    <button class="btn btn-primary" id="downloadReportBtn">
+                        <i class="fas fa-download"></i>
+                        Download Report
+                    </button>
+                    <button class="btn btn-secondary" id="shareResultsBtn">
+                        <i class="fas fa-share"></i>
+                        Share Results
+                    </button>
+                    <button class="btn btn-outline" id="newAnalysisBtn">
+                        <i class="fas fa-plus"></i>
+                        New Analysis
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section class="content-section" id="analysis-section">
+            <div class="section-header">
+                <h1>Historical Analysis</h1>
+                <p>Analyze historical climate data and trends</p>
+            </div>
+            
+            <div class="analysis-placeholder">
+                <i class="fas fa-chart-line"></i>
+                <h3>Historical Analysis</h3>
+                <p>This section will contain historical climate data analysis tools and visualizations.</p>
+                <button class="btn btn-primary">Coming Soon</button>
+            </div>
+        </section>
+
+        <!-- Predictions Section -->
+        <section class="content-section" id="predictions-section">
+            <div class="section-header">
+                <h1>Climate Predictions</h1>
+                <p>Generate AI-powered climate predictions and scenarios</p>
+            </div>
+            
+            <div class="predictions-placeholder">
+                <i class="fas fa-crystal-ball"></i>
+                <h3>Prediction Engine</h3>
+                <p>Advanced climate prediction tools and scenario modeling.</p>
+                <button class="btn btn-primary" onclick="window.location.href='predictions-enhanced.html'">
+                    Open Enhanced Predictions
+                </button>
+            </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section class="content-section" id="insights-section">
+            <div class="section-header">
+                <h1>AI Insights & Recommendations</h1>
+                <p>AI-powered climate insights and actionable recommendations</p>
+            </div>
+            
+            <div class="insights-placeholder">
+                <i class="fas fa-brain"></i>
+                <h3>AI Insights</h3>
+                <p>Intelligent climate analysis and recommendations powered by machine learning.</p>
+                <button class="btn btn-primary">Coming Soon</button>
+            </div>
+        </section>
+
+        <!-- Modules Section -->
+        <section class="content-section" id="modules-section">
+            <div class="section-header">
+                <h1>Climate Modules</h1>
+                <p>Specialized climate analysis modules and tools</p>
+            </div>
+            
+            <div class="modules-grid">
+                <div class="module-card">
+                    <div class="module-icon">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <h3>Flood Prediction</h3>
+                    <p>Advanced flood risk assessment and prediction models</p>
+                    <button class="btn btn-outline">Launch Module</button>
+                </div>
+                
+                <div class="module-card">
+                    <div class="module-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h3>Drought Analysis</h3>
+                    <p>Drought monitoring and early warning systems</p>
+                    <button class="btn btn-outline">Launch Module</button>
+                </div>
+                
+                <div class="module-card">
+                    <div class="module-icon">
+                        <i class="fas fa-thermometer-full"></i>
+                    </div>
+                    <h3>Heatwave Tracker</h3>
+                    <p>Extreme temperature monitoring and alerts</p>
+                    <button class="btn btn-outline">Launch Module</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-globe-americas fa-spin"></i>
+            <p>Loading dashboard...</p>
+        </div>
+    </div>
+
+    <!-- Shared Scripts -->
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+    
+    <!-- Dashboard Scripts -->
+    <script src="assets/js/dashboard.js"></script>
+    
+    <!-- Direct Charts Implementation -->
+    <script src="charts-direct.js"></script>
+    
+    <!-- Upload & Analysis System -->
+    <script src="upload-analysis.js"></script>
+    
+    <!-- Navigation Fix -->
+    <script src="navigation-fix.js"></script>
+    
+    <!-- File Upload Fix -->
+    <script src="file-upload-fix.js"></script>
+    
+    <!-- Charts & Predictions Fix -->
+    <script src="charts-predictions-fix.js"></script>
+    
+    <!-- REMOVED: Simple Analysis Fix - was overriding real AI analysis with hardcoded values -->
+    <!-- REMOVED: Direct Charts Fix - was conflicting with real analysis -->
+    <!-- REMOVED: Start Button Fix - was overriding real analysis functions -->
+    
+    <!-- Real AI Analysis System (Modular) -->
+    <link rel="stylesheet" href="ai-styles.css">
+    <script src="data-processor.js"></script>
+    <script src="model-runner.js"></script>
+    <script src="ui-manager.js"></script>
+    <script src="ai-analysis-main.js"></script>
+    
+    <!-- Real AI Verification (Prevents hardcoded values) -->
+    <script src="real-ai-verification.js"></script>
+</body>
+</html>

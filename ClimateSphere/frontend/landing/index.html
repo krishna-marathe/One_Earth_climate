@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimateSphere - Global Climate Intelligence Platform</title>
+    <meta name="description" content="Real-time climate monitoring, predictions, and insights powered by AI">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../shared/assets/css/common.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <i class="fas fa-globe-americas"></i>
+                <span>ClimateSphere</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="../dashboard/dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="../dashboard/historical-analysis.html" class="nav-link">Historical Analysis</a></li>
+                <li><a href="../dashboard/predictions.html" class="nav-link">Predictions</a></li>
+                <li><a href="#" class="nav-link">AI Chat</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-outline" id="loginBtn">Login</button>
+                <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section with Quick Actions -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Global Climate Intelligence</h1>
+                <p>Real-time monitoring, AI-powered predictions, and actionable insights for climate resilience</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-large" id="exploreBtn">
+                        <i class="fas fa-chart-line"></i>
+                        Explore Trends
+                    </button>
+                    <button class="btn btn-outline btn-large" id="learnMoreBtn">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </button>
+                    <button class="btn btn-outline btn-large" id="testDrawerBtn" style="background: #22c55e; color: white; border-color: #22c55e;">
+                        <i class="fas fa-test-tube"></i>
+                        Test Sidebar
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Cards -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card" id="co2Card" tabindex="0" role="button" aria-label="CO2 levels">
+                    <div class="stat-icon">
+                        <i class="fas fa-smog"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="co2Value">Loading...</h3>
+                        <p class="stat-label">CO2 Level (ppm)</p>
+                        <span class="stat-trend" id="co2Trend"></span>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="tempCard" tabindex="0" role="button" aria-label="Global temperature">
+                    <div class="stat-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="tempValue">Loading...</h3>
+                        <p class="stat-label">Avg Temperature (°C)</p>
+                        <span class="stat-trend" id="tempTrend"></span>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="floodCard" tabindex="0" role="button" aria-label="Active flood zones">
+                    <div class="stat-icon">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="floodValue">Loading...</h3>
+                        <p class="stat-label">Active Flood Zones</p>
+                        <span class="stat-trend" id="floodTrend"></span>
+                    </div>
+                </div>
+                
+                <div class="stat-card" id="alertCard" tabindex="0" role="button" aria-label="Extreme event alerts">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="alertValue">Loading...</h3>
+                        <p class="stat-label">Extreme Alerts</p>
+                        <span class="stat-trend" id="alertTrend"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Map Section -->
+        <section class="map-section">
+            <div class="map-container">
+                <div id="map" class="map" role="application" aria-label="Interactive climate map"></div>
+                
+                <!-- Map Controls -->
+                <div class="map-controls">
+                    <div class="layer-controls">
+                        <h4><i class="fas fa-layer-group"></i> Climate Layers</h4>
+                        <label class="layer-toggle" data-layer="temperature">
+                            <div class="layer-icon temperature"><i class="fas fa-thermometer-half"></i></div>
+                            <input type="checkbox" id="tempLayer" checked>
+                            <span class="checkmark"></span>
+                            Temperature
+                        </label>
+                        <label class="layer-toggle" data-layer="aqi">
+                            <div class="layer-icon aqi"><i class="fas fa-smog"></i></div>
+                            <input type="checkbox" id="aqiLayer">
+                            <span class="checkmark"></span>
+                            Air Quality
+                        </label>
+                        <label class="layer-toggle" data-layer="rainfall">
+                            <div class="layer-icon rainfall"><i class="fas fa-cloud-rain"></i></div>
+                            <input type="checkbox" id="rainfallLayer">
+                            <span class="checkmark"></span>
+                            Rainfall
+                        </label>
+                        <label class="layer-toggle" data-layer="snow">
+                            <div class="layer-icon snow"><i class="fas fa-snowflake"></i></div>
+                            <input type="checkbox" id="snowLayer">
+                            <span class="checkmark"></span>
+                            Snow Cover
+                        </label>
+                        <label class="layer-toggle" data-layer="cyclone">
+                            <div class="layer-icon cyclone"><i class="fas fa-hurricane"></i></div>
+                            <input type="checkbox" id="cycloneLayer" checked>
+                            <span class="checkmark"></span>
+                            Cyclones
+                        </label>
+                        <label class="layer-toggle" data-layer="water-stress">
+                            <div class="layer-icon water-stress"><i class="fas fa-tint"></i></div>
+                            <input type="checkbox" id="waterStressLayer">
+                            <span class="checkmark"></span>
+                            Water Stress
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Map Toolbar -->
+                <div class="map-toolbar">
+                    <button class="map-tool-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="map-tool-btn" id="locateBtn" title="Find My Location">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                    <button class="map-tool-btn" id="resetViewBtn" title="Reset View">
+                        <i class="fas fa-home"></i>
+                    </button>
+                    <button class="map-tool-btn" id="shareBtn" title="Share Map">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                    <h5><i class="fas fa-info-circle"></i> Risk Levels</h5>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #22c55e;"></div>
+                        <span>Safe</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #eab308;"></div>
+                        <span>Moderate</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f97316;"></div>
+                        <span>High</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ef4444;"></div>
+                        <span>Severe</span>
+                    </div>
+                </div>
+
+                <!-- Map Info Panel -->
+                <div class="map-info-panel" id="mapInfoPanel">
+                    <div class="info-panel-header">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>Global Climate Overview</span>
+                    </div>
+                    <div class="info-panel-content">
+                        <p>Click on any region marker to view detailed climate data and risk assessments.</p>
+                        <p><strong>Active Regions:</strong> <span id="activeRegionsCount">5</span></p>
+                        <p><strong>Last Updated:</strong> <span id="lastUpdated">Just now</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Drawer Backdrop -->
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <!-- Region Info Drawer -->
+    <aside class="region-drawer" id="regionDrawer" role="complementary" aria-label="Region information">
+        <div class="drawer-header">
+            <h3 id="regionName">Region Details</h3>
+            <button class="drawer-close" id="drawerClose" aria-label="Close region details">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="drawer-content">
+            <div class="region-stats">
+                <div class="region-stat">
+                    <span class="stat-icon"><i class="fas fa-thermometer-half"></i></span>
+                    <div>
+                        <strong id="regionTemp">--°C</strong>
+                        <small>Temperature</small>
+                    </div>
+                </div>
+                
+                <div class="region-stat">
+                    <span class="stat-icon"><i class="fas fa-wind"></i></span>
+                    <div>
+                        <strong id="regionAqi">--</strong>
+                        <small>Air Quality Index</small>
+                    </div>
+                </div>
+                
+                <div class="region-stat">
+                    <span class="stat-icon"><i class="fas fa-cloud-rain"></i></span>
+                    <div>
+                        <strong id="regionRainfall">-- mm</strong>
+                        <small>Rainfall (24h)</small>
+                    </div>
+                </div>
+                
+                <div class="region-stat">
+                    <span class="stat-icon"><i class="fas fa-smog"></i></span>
+                    <div>
+                        <strong id="regionCo2">-- ppm</strong>
+                        <small>CO2 Level</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="region-chart">
+                <h4>Temperature Trend</h4>
+                <canvas id="regionChart" width="300" height="150"></canvas>
+            </div>
+            
+            <div class="region-alerts">
+                <h4>Active Alerts</h4>
+                <div id="regionAlertsList" class="alerts-list">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="drawer-actions">
+                <button class="btn btn-primary btn-full" id="openDashboardBtn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Open Region Dashboard
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ClimateSphere</h4>
+                <p>Empowering climate resilience through data-driven insights and AI-powered predictions.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#help">Help</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Data Sources</h4>
+                <ul>
+                    <li><a href="https://openweathermap.org" target="_blank">OpenWeatherMap</a></li>
+                    <li><a href="https://aqicn.org" target="_blank">World Air Quality</a></li>
+                    <li><a href="https://co2signal.com" target="_blank">CO2 Signal</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 ClimateSphere. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-globe-americas fa-spin"></i>
+            <p>Loading climate data...</p>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Shared Scripts -->
+    <script src="../shared/assets/js/api.js"></script>
+    <script src="../shared/assets/js/utils.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
