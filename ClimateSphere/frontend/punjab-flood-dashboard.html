@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punjab Flood Case Study - ClimateSphere</title>
+    <meta name="description" content="Punjab Flood Risk Analysis and Prediction Dashboard">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared/assets/css/common.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/punjab-flood-dashboard.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <button class="back-btn" onclick="window.location.href='landing/index.html'" title="Back to Home">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <i class="fas fa-water"></i>
+                <span>Punjab Flood Dashboard</span>
+            </div>
+            <div class="nav-center">
+                <div class="case-study-indicator">
+                    <i class="fas fa-flask"></i>
+                    <span>Case Study Mode</span>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" id="alertsBtn" title="Flood Alerts">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="alert-badge">3</span>
+                </button>
+                <button class="nav-btn" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Alert Banner -->
+        <div class="alert-banner" id="floodAlert">
+            <div class="alert-content">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="alert-text">
+                    <h3>🚨 Flood Risk Alert: <span id="riskLevel">High (87%)</span></h3>
+                    <p>🌧 Predicted Heavy Rainfall Detected on Day 5 | 💧 Rising Soil Moisture Levels Observed</p>
+                </div>
+                <button class="alert-close" onclick="closeAlert()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <div class="section-header">
+                <h1><i class="fas fa-cloud-upload-alt"></i> Punjab Flood Analysis</h1>
+                <p>Upload climate data to analyze flood risk patterns. System automatically detects dataset duration and activates appropriate analysis mode.</p>
+            </div>
+
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <h3>Drop CSV file here or click to browse</h3>
+                    <p>Required columns: month, rainfall_mm, humidity_pct, temperature</p>
+                    <div class="mode-indicator">
+                        <div class="mode-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>&lt; 12 months → Punjab Flood Case Study</span>
+                        </div>
+                        <div class="mode-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>≥ 12 months → Normal Climate Analysis</span>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".csv" hidden>
+                    <button class="btn btn-primary" id="browseBtn">
+                        <i class="fas fa-upload"></i>
+                        Browse Files
+                    </button>
+                </div>
+
+                <!-- Analysis Status -->
+                <div class="analysis-status" id="analysisStatus" style="display: none;">
+                    <div class="status-header">
+                        <h3 id="statusTitle">🧠 Analyzing Dataset...</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                    <div class="status-logs" id="statusLogs">
+                        <!-- Logs will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <!-- Mode Indicator -->
+            <div class="mode-banner" id="modeBanner">
+                <div class="mode-content">
+                    <i class="fas fa-water" id="modeIcon"></i>
+                    <div class="mode-text">
+                        <h3 id="modeTitle">Punjab Flood Case Study Mode Activated</h3>
+                        <p id="modeDescription">Dataset duration: 8 months. Synthetic flood data generated for analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flood Risk Summary -->
+            <div class="risk-summary" id="riskSummary">
+                <div class="risk-cards">
+                    <div class="risk-card high-risk">
+                        <div class="risk-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="risk-content">
+                            <h4>Flood Probability</h4>
+                            <span class="risk-value" id="floodProbability">87%</span>
+                            <p class="risk-status">High Risk</p>
+                        </div>
+                    </div>
+
+                    <div class="risk-card medium-risk">
+                        <div class="risk-icon">
+                            <i class="fas fa-cloud-rain"></i>
+                        </div>
+                        <div class="risk-content">
+                            <h4>Peak Rainfall Day</h4>
+                            <span class="risk-value" id="peakRainfallDay">Day 5</span>
+                            <p class="risk-status">Critical Period</p>
+                        </div>
+                    </div>
+
+                    <div class="risk-card warning-risk">
+                        <div class="risk-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="risk-content">
+                            <h4>Soil Moisture</h4>
+                            <span class="risk-value" id="soilMoisture">92%</span>
+                            <p class="risk-status">Saturated</p>
+                        </div>
+                    </div>
+
+                    <div class="risk-card info-risk">
+                        <div class="risk-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="risk-content">
+                            <h4>Temperature Anomaly</h4>
+                            <span class="risk-value" id="tempAnomaly">+3.2°C</span>
+                            <p class="risk-status">Above Normal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Rainfall vs. Day Analysis</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn" onclick="downloadChart('rainfallChart')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="chart-btn" onclick="fullscreenChart('rainfallChart')">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="rainfallChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-fire"></i> Flood Risk Intensity Heatmap</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn" onclick="downloadChart('riskHeatmap')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="chart-btn" onclick="fullscreenChart('riskHeatmap')">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="riskHeatmap"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis -->
+            <div class="detailed-analysis">
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-brain"></i> AI Model Insights</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="insight-item">
+                                <span class="insight-label">Model Used:</span>
+                                <span class="insight-value">Punjab Flood Prediction Model 2</span>
+                            </div>
+                            <div class="insight-item">
+                                <span class="insight-label">Accuracy:</span>
+                                <span class="insight-value">94.2%</span>
+                            </div>
+                            <div class="insight-item">
+                                <span class="insight-label">Confidence:</span>
+                                <span class="insight-value">High (0.87)</span>
+                            </div>
+                            <div class="insight-item">
+                                <span class="insight-label">Key Factors:</span>
+                                <span class="insight-value">Rainfall spike, Soil saturation, Temperature anomaly</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-exclamation-circle"></i> Risk Assessment</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="risk-timeline">
+                                <div class="timeline-item high">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <h5>Day 3-7: Critical Period</h5>
+                                        <p>Heavy rainfall expected, flood risk peaks</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item medium">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <h5>Day 8-12: Monitoring</h5>
+                                        <p>Water levels remain elevated</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item low">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <h5>Day 13+: Recovery</h5>
+                                        <p>Gradual return to normal levels</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-shield-alt"></i> Recommendations</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="recommendation-list">
+                                <div class="recommendation-item">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Issue immediate flood warnings for affected areas</span>
+                                </div>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-home"></i>
+                                    <span>Evacuate low-lying residential areas</span>
+                                </div>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-road"></i>
+                                    <span>Close flood-prone transportation routes</span>
+                                </div>
+                                <div class="recommendation-item">
+                                    <i class="fas fa-water"></i>
+                                    <span>Deploy emergency water management resources</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="export-section">
+                <h3><i class="fas fa-download"></i> Export Analysis</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-primary" onclick="exportFloodReport()">
+                        <i class="fas fa-file-pdf"></i>
+                        Export Flood Report (PDF)
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportCharts()">
+                        <i class="fas fa-image"></i>
+                        Export Charts (PNG)
+                    </button>
+                    <button class="btn btn-outline" onclick="exportData()">
+                        <i class="fas fa-file-csv"></i>
+                        Export Data (CSV)
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-water fa-spin"></i>
+            <p>Analyzing flood risk patterns...</p>
+        </div>
+    </div>
+
+    <!-- Shared Scripts -->
+    <script src="shared/assets/js/utils.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="assets/js/punjab-flood-dashboard.js"></script>
+</body>
+</html>

@@ -30,6 +30,7 @@
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="../dashboard/dashboard.html" class="nav-link">Dashboard</a></li>
                 <li><a href="../dashboard/historical-analysis.html" class="nav-link">Historical Analysis</a></li>
+                <li><a href="../punjab-flood-dashboard.html" class="nav-link">Punjab Flood Study</a></li>
                 <li><a href="../dashboard/predictions.html" class="nav-link">Predictions</a></li>
                 <li><a href="#" class="nav-link">AI Chat</a></li>
             </ul>
@@ -94,14 +95,14 @@
                     </div>
                 </div>
                 
-                <div class="stat-card" id="floodCard" tabindex="0" role="button" aria-label="Active flood zones">
+                <div class="stat-card" id="floodCard" tabindex="0" role="button" aria-label="Punjab flood analysis" onclick="window.location.href='../punjab-flood-dashboard.html'">
                     <div class="stat-icon">
                         <i class="fas fa-water"></i>
                     </div>
                     <div class="stat-content">
-                        <h3 class="stat-value" id="floodValue">Loading...</h3>
-                        <p class="stat-label">Active Flood Zones</p>
-                        <span class="stat-trend" id="floodTrend"></span>
+                        <h3 class="stat-value" id="floodValue">87%</h3>
+                        <p class="stat-label">Punjab Flood Risk</p>
+                        <span class="stat-trend up" id="floodTrend">Case Study</span>
                     </div>
                 </div>
                 
@@ -113,6 +114,17 @@
                         <h3 class="stat-value" id="alertValue">Loading...</h3>
                         <p class="stat-label">Extreme Alerts</p>
                         <span class="stat-trend" id="alertTrend"></span>
+                    </div>
+                </div>
+
+                <div class="stat-card" id="analysisCard" tabindex="0" role="button" aria-label="Historical analysis" onclick="window.location.href='../dashboard/historical-analysis.html'">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="analysisValue">864</h3>
+                        <p class="stat-label">Historical Records</p>
+                        <span class="stat-trend up" id="analysisTrend">2015-2023</span>
                     </div>
                 </div>
             </div>
