@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ClimateSphere</title>
     <meta name="description" content="ClimateSphere climate intelligence dashboard">
-    
+
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Shared Styles -->
     <link rel="stylesheet" href="../shared/assets/css/common.css">
-    
+
     <!-- Dashboard Styles -->
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="dashboard-header">
@@ -28,29 +30,30 @@
                 <span>ClimateSphere</span>
             </div>
         </div>
-        
+
         <div class="header-center">
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search regions, data, insights..." id="globalSearch">
+                <input type="text" class="search-input" placeholder="Search regions, data, insights..."
+                    id="globalSearch">
                 <button class="search-btn">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
-        
+
         <div class="header-right">
             <button class="header-btn" id="notificationsBtn" aria-label="Notifications">
                 <i class="fas fa-bell"></i>
                 <span class="notification-badge">3</span>
             </button>
-            
+
             <div class="user-menu">
                 <button class="user-avatar" id="userMenuBtn" aria-label="User menu">
                     <i class="fas fa-user-circle"></i>
                     <span class="user-name" id="userName">Demo User</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
-                
+
                 <div class="user-dropdown" id="userDropdown">
                     <a href="#" class="dropdown-item">
                         <i class="fas fa-user"></i>
@@ -80,35 +83,43 @@
                         <span>Overview</span>
                     </button>
                 </li>
-                
+
                 <li class="nav-item">
                     <button class="nav-link" data-section="upload">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <span>Data Upload</span>
                     </button>
                 </li>
-                
+
                 <li class="nav-item">
                     <button class="nav-link" data-section="analysis">
                         <i class="fas fa-chart-line"></i>
                         <span>Historical Analysis</span>
                     </button>
                 </li>
-                
+
                 <li class="nav-item">
                     <button class="nav-link" data-section="predictions">
                         <i class="fas fa-crystal-ball"></i>
                         <span>Predictions</span>
                     </button>
                 </li>
-                
+
                 <li class="nav-item">
                     <button class="nav-link" data-section="insights">
                         <i class="fas fa-brain"></i>
                         <span>AI Insights</span>
                     </button>
                 </li>
-                
+
+                <li class="nav-item">
+                    <a href="chatbot.html" class="nav-link"
+                        style="display: flex; align-items: center; gap: var(--spacing-sm); text-decoration: none; color: inherit;">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Chatbot</span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <button class="nav-link" data-section="modules">
                         <i class="fas fa-puzzle-piece"></i>
@@ -117,7 +128,7 @@
                 </li>
             </ul>
         </nav>
-        
+
         <div class="sidebar-footer">
             <div class="demo-indicator">
                 <i class="fas fa-flask"></i>
@@ -134,7 +145,7 @@
                 <h1>Climate Overview</h1>
                 <p id="regionFilter">Global climate intelligence dashboard</p>
             </div>
-            
+
             <!-- Quick Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -147,7 +158,7 @@
                         <span class="stat-trend up">+2.1 ppm</span>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon temp">
                         <i class="fas fa-thermometer-half"></i>
@@ -158,7 +169,7 @@
                         <span class="stat-trend up">+1.1°C</span>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon zones">
                         <i class="fas fa-water"></i>
@@ -169,7 +180,7 @@
                         <span class="stat-trend up">+5</span>
                     </div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-icon alerts">
                         <i class="fas fa-exclamation-triangle"></i>
@@ -181,7 +192,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Global Climate Analysis Charts -->
             <div class="charts-section">
                 <h2>Global Climate Analysis - Daily Averages</h2>
@@ -195,14 +206,16 @@
                     <div class="last-updated">
                         Last updated: Loading...
                     </div>
-                    <button class="btn btn-secondary" onclick="window.initializeClimateCharts && window.initializeClimateCharts()">
+                    <button class="btn btn-secondary"
+                        onclick="window.initializeClimateCharts && window.initializeClimateCharts()">
                         🔧 Debug: Initialize Charts
                     </button>
-                    <button class="btn btn-outline" onclick="window.navigateToSection && window.navigateToSection('upload')">
+                    <button class="btn btn-outline"
+                        onclick="window.navigateToSection && window.navigateToSection('upload')">
                         📤 Test: Go to Upload
                     </button>
                 </div>
-                
+
                 <div class="charts-grid">
                     <!-- Temperature Chart -->
                     <div class="chart-container">
@@ -229,7 +242,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Rainfall Chart -->
                     <div class="chart-container">
                         <div class="chart-header">
@@ -255,7 +268,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Heat Index Chart -->
                     <div class="chart-container">
                         <div class="chart-header">
@@ -281,7 +294,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Humidity Chart -->
                     <div class="chart-container">
                         <div class="chart-header">
@@ -308,7 +321,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Regional Breakdown -->
                 <div class="regional-analysis">
                     <h3>Regional Climate Breakdown</h3>
@@ -330,7 +343,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="region-card">
                             <h4><i class="fas fa-globe-europe"></i> Europe</h4>
                             <div class="region-stats">
@@ -348,7 +361,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="region-card">
                             <h4><i class="fas fa-globe-asia"></i> Asia</h4>
                             <div class="region-stats">
@@ -366,7 +379,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="region-card">
                             <h4><i class="fas fa-globe-africa"></i> Africa</h4>
                             <div class="region-stats">
@@ -387,7 +400,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="action-buttons">
                 <button class="btn btn-primary" data-action="upload">
@@ -403,7 +416,7 @@
                     Generate Predictions
                 </button>
             </div>
-            
+
             <!-- Recent Activity -->
             <div class="activity-section">
                 <h2>Recent Activity</h2>
@@ -419,7 +432,7 @@
                 <h1>Data Upload & Analysis</h1>
                 <p>Upload climate data files and get AI-powered analysis using our trained models</p>
             </div>
-            
+
             <!-- Upload Area -->
             <div class="upload-container">
                 <div class="upload-area" id="uploadArea">
@@ -459,7 +472,7 @@
                         Browse Files
                     </button>
                 </div>
-                
+
                 <div class="upload-progress" id="uploadProgress">
                     <!-- Progress bars will be added dynamically -->
                 </div>
@@ -475,7 +488,8 @@
                             <i class="fas fa-water"></i>
                             <h4>Model 1: Flood Risk Prediction</h4>
                         </div>
-                        <p>Analyzes rainfall patterns and terrain data to predict flood risks and water accumulation zones.</p>
+                        <p>Analyzes rainfall patterns and terrain data to predict flood risks and water accumulation
+                            zones.</p>
                         <div class="model-accuracy">
                             <span class="accuracy-label">Accuracy:</span>
                             <span class="accuracy-value">94.2%</span>
@@ -486,13 +500,14 @@
                             Use this model
                         </label>
                     </div>
-                    
+
                     <div class="model-card" data-model="2">
                         <div class="model-header">
                             <i class="fas fa-sun"></i>
                             <h4>Model 2: Drought Analysis</h4>
                         </div>
-                        <p>Evaluates temperature, humidity, and precipitation data to assess drought conditions and severity.</p>
+                        <p>Evaluates temperature, humidity, and precipitation data to assess drought conditions and
+                            severity.</p>
                         <div class="model-accuracy">
                             <span class="accuracy-label">Accuracy:</span>
                             <span class="accuracy-value">91.8%</span>
@@ -503,13 +518,14 @@
                             Use this model
                         </label>
                     </div>
-                    
+
                     <div class="model-card" data-model="3">
                         <div class="model-header">
                             <i class="fas fa-thermometer-full"></i>
                             <h4>Model 3: Heatwave Detection</h4>
                         </div>
-                        <p>Identifies extreme temperature patterns and predicts heatwave events with duration estimates.</p>
+                        <p>Identifies extreme temperature patterns and predicts heatwave events with duration estimates.
+                        </p>
                         <div class="model-accuracy">
                             <span class="accuracy-label">Accuracy:</span>
                             <span class="accuracy-value">96.5%</span>
@@ -520,7 +536,7 @@
                             Use this model
                         </label>
                     </div>
-                    
+
                     <div class="model-card" data-model="4">
                         <div class="model-header">
                             <i class="fas fa-chart-line"></i>
@@ -538,7 +554,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="analysis-options">
                     <h4>📊 Analysis Options</h4>
                     <div class="options-grid">
@@ -564,7 +580,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <button class="btn btn-primary btn-large" id="startAnalysisBtn">
                     <i class="fas fa-play"></i>
                     Start Analysis
@@ -574,7 +590,7 @@
             <!-- Analysis Results -->
             <div class="analysis-results" id="analysisResults" style="display: none;">
                 <h3>📈 Analysis Results</h3>
-                
+
                 <!-- Analysis Progress -->
                 <div class="analysis-progress" id="analysisProgress">
                     <div class="progress-header">
@@ -617,7 +633,7 @@
                                 <p>Critical weather events detected</p>
                             </div>
                         </div>
-                        
+
                         <div class="summary-card risk-medium">
                             <div class="card-icon">
                                 <i class="fas fa-exclamation"></i>
@@ -628,7 +644,7 @@
                                 <p>Moderate weather events detected</p>
                             </div>
                         </div>
-                        
+
                         <div class="summary-card confidence">
                             <div class="card-icon">
                                 <i class="fas fa-chart-line"></i>
@@ -639,7 +655,7 @@
                                 <p>Overall prediction accuracy</p>
                             </div>
                         </div>
-                        
+
                         <div class="summary-card data-points">
                             <div class="card-icon">
                                 <i class="fas fa-database"></i>
@@ -673,7 +689,7 @@
                             Climate Trends
                         </button>
                     </div>
-                    
+
                     <div class="tab-content">
                         <!-- Flood Risk Results -->
                         <div class="tab-pane active" id="flood-results">
@@ -691,7 +707,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Drought Analysis Results -->
                         <div class="tab-pane" id="drought-results">
                             <div class="result-header">
@@ -708,7 +724,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Heatwave Detection Results -->
                         <div class="tab-pane" id="heatwave-results">
                             <div class="result-header">
@@ -725,7 +741,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Climate Trends Results -->
                         <div class="tab-pane" id="trends-results">
                             <div class="result-header">
@@ -769,7 +785,7 @@
                 <h1>Historical Analysis</h1>
                 <p>Analyze historical climate data and trends</p>
             </div>
-            
+
             <div class="analysis-placeholder">
                 <i class="fas fa-chart-line"></i>
                 <h3>Historical Analysis</h3>
@@ -784,7 +800,7 @@
                 <h1>Climate Predictions</h1>
                 <p>Generate AI-powered climate predictions and scenarios</p>
             </div>
-            
+
             <div class="predictions-placeholder">
                 <i class="fas fa-crystal-ball"></i>
                 <h3>Prediction Engine</h3>
@@ -801,7 +817,7 @@
                 <h1>AI Insights & Recommendations</h1>
                 <p>AI-powered climate insights and actionable recommendations</p>
             </div>
-            
+
             <div class="insights-placeholder">
                 <i class="fas fa-brain"></i>
                 <h3>AI Insights</h3>
@@ -816,7 +832,7 @@
                 <h1>Climate Modules</h1>
                 <p>Specialized climate analysis modules and tools</p>
             </div>
-            
+
             <div class="modules-grid">
                 <div class="module-card">
                     <div class="module-icon">
@@ -826,7 +842,7 @@
                     <p>Advanced flood risk assessment and prediction models</p>
                     <button class="btn btn-outline">Launch Module</button>
                 </div>
-                
+
                 <div class="module-card">
                     <div class="module-icon">
                         <i class="fas fa-sun"></i>
@@ -835,7 +851,7 @@
                     <p>Drought monitoring and early warning systems</p>
                     <button class="btn btn-outline">Launch Module</button>
                 </div>
-                
+
                 <div class="module-card">
                     <div class="module-icon">
                         <i class="fas fa-thermometer-full"></i>
@@ -859,37 +875,38 @@
     <!-- Shared Scripts -->
     <script src="../shared/assets/js/api.js"></script>
     <script src="../shared/assets/js/utils.js"></script>
-    
+
     <!-- Dashboard Scripts -->
     <script src="assets/js/dashboard.js"></script>
-    
+
     <!-- Direct Charts Implementation -->
     <script src="charts-direct.js"></script>
-    
+
     <!-- Upload & Analysis System -->
     <script src="upload-analysis.js"></script>
-    
+
     <!-- Navigation Fix -->
     <script src="navigation-fix.js"></script>
-    
+
     <!-- File Upload Fix -->
     <script src="file-upload-fix.js"></script>
-    
+
     <!-- Charts & Predictions Fix -->
     <script src="charts-predictions-fix.js"></script>
-    
+
     <!-- REMOVED: Simple Analysis Fix - was overriding real AI analysis with hardcoded values -->
     <!-- REMOVED: Direct Charts Fix - was conflicting with real analysis -->
     <!-- REMOVED: Start Button Fix - was overriding real analysis functions -->
-    
+
     <!-- Real AI Analysis System (Modular) -->
     <link rel="stylesheet" href="ai-styles.css">
     <script src="data-processor.js"></script>
     <script src="model-runner.js"></script>
     <script src="ui-manager.js"></script>
     <script src="ai-analysis-main.js"></script>
-    
+
     <!-- Real AI Verification (Prevents hardcoded values) -->
     <script src="real-ai-verification.js"></script>
 </body>
+
 </html>

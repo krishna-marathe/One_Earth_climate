@@ -3,69 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Climate Assistant - ClimateSphere</title>
+    <title>Climate AI Chatbot - ClimateSphere</title>
     
-    <!-- External Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../shared/common.css">
     
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="../shared/assets/css/common.css">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        .chatbot-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        .main-content {
+            padding: var(--spacing-lg);
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chatbot-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--radius-xl);
+            color: white;
+        }
+        
+        .chatbot-header h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .chatbot-header p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+        }
+        
+        .chat-container {
             display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-            height: calc(100vh - 140px);
+            grid-template-columns: 1fr 300px;
+            gap: var(--spacing-xl);
+            flex: 1;
+            max-height: calc(100vh - 300px);
         }
         
         .chat-main {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
         
-        .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        
-        .chat-header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .chat-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-        
         .chat-messages {
             flex: 1;
-            padding: 1.5rem;
             overflow-y: auto;
-            background: #f8fafc;
+            padding: var(--spacing-lg);
+            background: var(--background);
         }
         
-        .message {
-            margin-bottom: 1.5rem;
+        .chat-message {
+            margin-bottom: var(--spacing-lg);
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: var(--spacing-sm);
         }
         
-        .message.user {
+        .chat-message.user {
             flex-direction: row-reverse;
         }
         
@@ -77,62 +82,242 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            color: white;
             flex-shrink: 0;
         }
         
-        .message.bot .message-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .message-avatar.user {
+            background: var(--primary-color);
         }
         
-        .message.user .message-avatar {
-            background: #e2e8f0;
-            color: #64748b;
+        .message-avatar.ai {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
         }
         
         .message-content {
             max-width: 70%;
-            padding: 1rem 1.25rem;
-            border-radius: 18px;
-            line-height: 1.5;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            line-height: 1.6;
+            white-space: pre-wrap;
         }
         
-        .message.bot .message-content {
-            background: white;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        
-        .message.user .message-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .message-content.user {
+            background: var(--primary-color);
             color: white;
+            border-bottom-right-radius: var(--radius-sm);
         }
         
-        .message-time {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 0.5rem;
+        .message-content.ai {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+        
+        .message-metadata {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .message-action {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .message-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .chat-input-area {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            resize: none;
+            font-family: inherit;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .send-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .send-button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
+        .send-button:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .sidebar-section {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        
+        .sidebar-section h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-lg);
+        }
+        
+        .user-type-selector {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .user-type-option {
+            padding: var(--spacing-sm);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .user-type-option:hover,
+        .user-type-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .quick-questions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .quick-question {
+            padding: var(--spacing-sm);
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .quick-question:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .risk-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .risk-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm);
+            background: var(--background);
+            border-radius: var(--radius-md);
+        }
+        
+        .risk-level {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+        
+        .risk-level.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .risk-level.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .risk-level.low {
+            background: #dcfce7;
+            color: #16a34a;
         }
         
         .typing-indicator {
             display: none;
             align-items: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            color: #64748b;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
             font-style: italic;
         }
         
         .typing-dots {
             display: flex;
-            gap: 0.25rem;
+            gap: 4px;
         }
         
         .typing-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #94a3b8;
+            background: var(--text-secondary);
             animation: typing 1.4s infinite ease-in-out;
         }
         
@@ -144,324 +329,377 @@
             40% { transform: scale(1); opacity: 1; }
         }
         
-        .chat-input-area {
-            padding: 1.5rem;
-            background: white;
-            border-top: 1px solid #e2e8f0;
+        .welcome-message {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--text-secondary);
         }
         
-        .chat-input-container {
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-end;
-        }
-        
-        .chat-input {
-            flex: 1;
-            min-height: 44px;
-            max-height: 120px;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 22px;
-            resize: none;
-            font-family: inherit;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            transition: border-color 0.2s ease;
-        }
-        
-        .chat-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .send-button {
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease;
-        }
-        
-        .send-button:hover {
-            transform: scale(1.05);
-        }
-        
-        .send-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .chat-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .sidebar-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        
-        .sidebar-card h3 {
-            margin: 0 0 1rem 0;
-            font-size: 1.1rem;
-            color: #374151;
-        }
-        
-        .quick-questions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .quick-question {
-            padding: 0.75rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
-            text-align: left;
-        }
-        
-        .quick-question:hover {
-            background: #eef2ff;
-            border-color: #667eea;
-            transform: translateY(-1px);
-        }
-        
-        .context-info {
-            font-size: 0.85rem;
-            color: #64748b;
-            line-height: 1.4;
-        }
-        
-        .context-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .context-item i {
-            color: #10b981;
-        }
-        
-        .prediction-summary {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .prediction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .prediction-value {
-            font-weight: 600;
-            color: #0369a1;
-        }
-        
-        @media (max-width: 1024px) {
-            .chatbot-container {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-            
-            .chat-main {
-                height: 70vh;
-            }
+        .welcome-message i {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            color: var(--primary-color);
         }
         
         @media (max-width: 768px) {
-            .chatbot-container {
-                padding: 1rem;
-                gap: 1rem;
+            .chat-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
             }
             
-            .message-content {
-                max-width: 85%;
+            .chat-sidebar {
+                order: -1;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            
+            .sidebar-section {
+                min-width: 250px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-left">
-            <button class="sidebar-toggle" onclick="window.history.back()">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <div class="header-brand">
-                <i class="fas fa-robot"></i>
-                <span>AI Climate Assistant</span>
-            </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/landing/index.html" class="navbar-brand">
+                <i class="fas fa-globe-americas"></i>
+                ClimateSphere
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="/landing/index.html" class="nav-link">Home</a></li>
+                <li><a href="/dashboard/dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="/dashboard/predictions.html" class="nav-link">Predictions</a></li>
+                <li><a href="/dashboard/insights.html" class="nav-link">Insights</a></li>
+                <li><a href="/dashboard/chatbot.html" class="nav-link active">AI Chat</a></li>
+            </ul>
         </div>
-        
-        <div class="header-right">
-            <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
-        </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
-    <main style="margin-top: 70px;">
-        <div class="chatbot-container">
-            <!-- Chat Main Area -->
-            <div class="chat-main">
-                <div class="chat-header">
-                    <h1><i class="fas fa-robot"></i> Climate Intelligence Assistant</h1>
-                    <p>Ask me anything about climate predictions, data analysis, and environmental insights</p>
-                </div>
-                
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Welcome message -->
-                    <div class="message bot">
-                        <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="message-content">
-                            <div>Hello! I'm your AI Climate Assistant. I can help you with:</div>
-                            <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-                                <li>Climate predictions and forecasts</li>
-                                <li>Data analysis and insights</li>
-                                <li>Risk assessments</li>
-                                <li>Environmental recommendations</li>
-                                <li>Scenario modeling</li>
-                            </ul>
-                            <div>What would you like to know?</div>
-                            <div class="message-time">Just now</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="typing-indicator" id="typingIndicator">
-                    <i class="fas fa-robot"></i>
-                    <span>AI is thinking</span>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-                
-                <div class="chat-input-area">
-                    <div class="chat-input-container">
-                        <textarea 
-                            class="chat-input" 
-                            id="chatInput" 
-                            placeholder="Ask about climate predictions, data analysis, or environmental insights..."
-                            rows="1"></textarea>
-                        <button class="send-button" id="sendButton">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="chatbot-header">
+                <h1><i class="fas fa-robot"></i> Climate AI Assistant</h1>
+                <p>Get personalized climate advice for farming, disaster response, and environmental planning</p>
             </div>
-            
-            <!-- Sidebar -->
-            <div class="chat-sidebar">
-                <!-- Quick Questions -->
-                <div class="sidebar-card">
-                    <h3><i class="fas fa-lightning-bolt"></i> Quick Questions</h3>
-                    <div class="quick-questions">
-                        <button class="quick-question" data-question="What will the temperature be like in 5 years?">
-                            What will the temperature be like in 5 years?
-                        </button>
-                        <button class="quick-question" data-question="What are the flood risks in my area?">
-                            What are the flood risks in my area?
-                        </button>
-                        <button class="quick-question" data-question="How does CO2 affect climate change?">
-                            How does CO2 affect climate change?
-                        </button>
-                        <button class="quick-question" data-question="What can I do to reduce environmental impact?">
-                            What can I do to reduce environmental impact?
-                        </button>
-                        <button class="quick-question" data-question="Explain the latest climate data trends">
-                            Explain the latest climate data trends
-                        </button>
-                        <button class="quick-question" data-question="Generate a climate risk report">
-                            Generate a climate risk report
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Context Information -->
-                <div class="sidebar-card">
-                    <h3><i class="fas fa-info-circle"></i> Current Context</h3>
-                    <div class="context-info">
-                        <div class="context-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Climate data loaded</span>
-                        </div>
-                        <div class="context-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>ML models active</span>
-                        </div>
-                        <div class="context-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Real-time analysis ready</span>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <!-- Main Chat Area -->
+                <div class="chat-main">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message" id="welcomeMessage">
+                            <i class="fas fa-robot"></i>
+                            <h3>Welcome to Climate AI Assistant!</h3>
+                            <p>I'm here to help you with climate-related questions. Choose your role on the right and ask me anything about weather patterns, crop management, or disaster preparedness.</p>
                         </div>
                     </div>
                     
-                    <div class="prediction-summary" id="predictionSummary">
-                        <strong>Latest Predictions:</strong>
-                        <div class="prediction-item">
-                            <span>Flood Risk:</span>
-                            <span class="prediction-value">30%</span>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-avatar ai">
+                            <i class="fas fa-robot"></i>
                         </div>
-                        <div class="prediction-item">
-                            <span>Drought Risk:</span>
-                            <span class="prediction-value">25%</span>
+                        <span>AI is thinking</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
                         </div>
-                        <div class="prediction-item">
-                            <span>Heat Risk:</span>
-                            <span class="prediction-value">45%</span>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <div class="chat-input-container">
+                            <textarea 
+                                class="chat-input" 
+                                id="chatInput" 
+                                placeholder="Ask me about climate patterns, farming advice, or disaster response..."
+                                rows="1"
+                            ></textarea>
+                            <button class="send-button" id="sendButton">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Actions -->
-                <div class="sidebar-card">
-                    <h3><i class="fas fa-tools"></i> Actions</h3>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <button class="btn btn-primary" onclick="clearChat()">
-                            <i class="fas fa-trash"></i>
-                            Clear Chat
-                        </button>
-                        <button class="btn btn-secondary" onclick="exportChat()">
-                            <i class="fas fa-download"></i>
-                            Export Chat
-                        </button>
-                        <button class="btn btn-secondary" onclick="shareInsights()">
-                            <i class="fas fa-share"></i>
-                            Share Insights
-                        </button>
+
+                <!-- Sidebar -->
+                <div class="chat-sidebar">
+                    <!-- User Type Selection -->
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-user"></i> I am a...</h3>
+                        <div class="user-type-selector">
+                            <div class="user-type-option" data-type="farmer">
+                                <i class="fas fa-seedling"></i> Farmer
+                            </div>
+                            <div class="user-type-option" data-type="disaster_response">
+                                <i class="fas fa-shield-alt"></i> Disaster Response Team
+                            </div>
+                            <div class="user-type-option active" data-type="general">
+                                <i class="fas fa-globe"></i> General User
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Questions -->
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-question-circle"></i> Quick Questions</h3>
+                        <div class="quick-questions" id="quickQuestions">
+                            <!-- Questions will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Chat Actions -->
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-cog"></i> Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                            <button class="btn btn-outline" id="clearChat">
+                                <i class="fas fa-trash"></i> Clear Chat
+                            </button>
+                            <button class="btn btn-outline" id="exportChat">
+                                <i class="fas fa-download"></i> Export History
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Shared Scripts -->
-    <script src="../shared/assets/js/api.js"></script>
-    <script src="../shared/assets/js/utils.js"></script>
-    
-    <!-- Chatbot Script -->
-    <script src="assets/js/chatbot.js"></script>
+    <!-- Shared JavaScript -->
+    <script src="../shared/api.js"></script>
+    <script src="../shared/utils.js"></script>
+    <script src="../shared/ai_chat.js"></script>
+
+    <script>
+        class ClimateChatbot {
+            constructor() {
+                this.currentUserType = 'general';
+                this.isTyping = false;
+                this.initializeEventListeners();
+                this.loadQuickQuestions();
+                this.setupAutoResize();
+            }
+
+            initializeEventListeners() {
+                // Send message events
+                document.getElementById('sendButton').addEventListener('click', () => {
+                    this.sendMessage();
+                });
+
+                document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // User type selection
+                document.querySelectorAll('.user-type-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        this.selectUserType(e.target.dataset.type);
+                    });
+                });
+
+                // Quick questions
+                document.getElementById('quickQuestions').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('quick-question')) {
+                        const question = e.target.textContent;
+                        document.getElementById('chatInput').value = question;
+                        this.sendMessage();
+                    }
+                });
+
+                // Chat actions
+                document.getElementById('clearChat').addEventListener('click', () => {
+                    this.clearChat();
+                });
+
+                document.getElementById('exportChat').addEventListener('click', () => {
+                    window.ClimateSphereAIChat.exportChatHistory();
+                });
+            }
+
+            setupAutoResize() {
+                const textarea = document.getElementById('chatInput');
+                textarea.addEventListener('input', () => {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+                });
+            }
+
+            selectUserType(type) {
+                this.currentUserType = type;
+                
+                // Update UI
+                document.querySelectorAll('.user-type-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                document.querySelector(`[data-type="${type}"]`).classList.add('active');
+                
+                // Update quick questions
+                this.loadQuickQuestions();
+                
+                // Show welcome message for new user type
+                this.showUserTypeWelcome(type);
+            }
+
+            showUserTypeWelcome(type) {
+                const welcomeMessages = {
+                    farmer: "Great! I'm now optimized to help with farming and agricultural questions. Ask me about crop management, irrigation, weather impacts, and farming strategies.",
+                    disaster_response: "Perfect! I'm ready to assist with disaster response planning, risk assessments, and emergency management. Ask me about evacuation procedures, risk mapping, and response protocols.",
+                    general: "I'm here to help with general climate questions, environmental insights, and sustainability topics. Feel free to ask about climate trends, impacts, and solutions."
+                };
+
+                this.addMessage(welcomeMessages[type], 'ai', {
+                    isSystemMessage: true
+                });
+            }
+
+            loadQuickQuestions() {
+                const questionsByType = {
+                    farmer: [
+                        "My crop is maize and rainfall has been low - what can I do?",
+                        "How can I protect my rice fields from flooding?",
+                        "What drought-resistant crops should I consider?",
+                        "When should I irrigate based on weather forecasts?",
+                        "How do I manage soil health during extreme weather?"
+                    ],
+                    disaster_response: [
+                        "Which districts face high flood risk this week?",
+                        "What's the emergency response protocol for heatwaves?",
+                        "How do I set up early warning systems?",
+                        "What are the evacuation procedures for coastal areas?",
+                        "How do I coordinate multi-agency disaster response?"
+                    ],
+                    general: [
+                        "What are the climate trends for my region?",
+                        "How will climate change affect agriculture?",
+                        "What adaptation strategies work best?",
+                        "Show me the latest risk predictions",
+                        "How can I reduce my carbon footprint?"
+                    ]
+                };
+
+                const questions = questionsByType[this.currentUserType] || questionsByType.general;
+                const container = document.getElementById('quickQuestions');
+                
+                container.innerHTML = questions.map(question => `
+                    <div class="quick-question">${question}</div>
+                `).join('');
+            }
+
+            async sendMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message || this.isTyping) return;
+                
+                // Clear input and hide welcome message
+                input.value = '';
+                input.style.height = 'auto';
+                document.getElementById('welcomeMessage').style.display = 'none';
+                
+                // Add user message
+                this.addMessage(message, 'user');
+                
+                // Show typing indicator
+                this.showTypingIndicator();
+                
+                try {
+                    // Get AI response
+                    const response = await window.ClimateSphereAIChat.sendMessage(message, {
+                        userType: this.currentUserType,
+                        page: 'chatbot'
+                    });
+                    
+                    // Hide typing indicator and add AI response
+                    this.hideTypingIndicator();
+                    this.addMessage(response, 'ai');
+                    
+                } catch (error) {
+                    console.error('Chat error:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('Sorry, I encountered an error. Please try again.', 'ai', {
+                        isError: true
+                    });
+                }
+            }
+
+            addMessage(content, sender, metadata = {}) {
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = `chat-message ${sender}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = `message-avatar ${sender}`;
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = `message-content ${sender}`;
+                messageContent.textContent = content;
+                
+                // Add metadata if available
+                if (metadata.isSystemMessage) {
+                    messageContent.style.fontStyle = 'italic';
+                    messageContent.style.opacity = '0.8';
+                }
+                
+                if (metadata.isError) {
+                    messageContent.style.color = '#dc2626';
+                }
+                
+                messageElement.appendChild(avatar);
+                messageElement.appendChild(messageContent);
+                
+                // Add timestamp
+                const timestamp = document.createElement('div');
+                timestamp.className = 'message-metadata';
+                timestamp.textContent = new Date().toLocaleTimeString();
+                messageContent.appendChild(timestamp);
+                
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            showTypingIndicator() {
+                this.isTyping = true;
+                document.getElementById('typingIndicator').style.display = 'flex';
+                document.getElementById('sendButton').disabled = true;
+                
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            hideTypingIndicator() {
+                this.isTyping = false;
+                document.getElementById('typingIndicator').style.display = 'none';
+                document.getElementById('sendButton').disabled = false;
+            }
+
+            clearChat() {
+                if (confirm('Are you sure you want to clear the chat history?')) {
+                    document.getElementById('chatMessages').innerHTML = `
+                        <div class="welcome-message" id="welcomeMessage">
+                            <i class="fas fa-robot"></i>
+                            <h3>Chat Cleared!</h3>
+                            <p>Start a new conversation by asking me anything about climate, farming, or disaster response.</p>
+                        </div>
+                    `;
+                    
+                    window.ClimateSphereAIChat.clearChatHistory();
+                    ClimateSphereUtils.showNotification('Chat history cleared', 'success');
+                }
+            }
+        }
+
+        // Initialize chatbot when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ClimateChatbot();
+        });
+    </script>
 </body>
 </html>

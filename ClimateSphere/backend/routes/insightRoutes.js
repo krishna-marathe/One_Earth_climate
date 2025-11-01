@@ -16,4 +16,12 @@ router.post('/chat', authController.authenticateToken, insightController.chatWit
 // Get insight history
 router.get('/history', authController.authenticateToken, insightController.getInsightHistory);
 
+// Get district-wise risk assessment
+router.get('/districts', authController.authenticateToken, insightController.getDistrictRiskAssessment);
+
+// Demo endpoints (no authentication required)
+router.post('/demo/chat', insightController.chatWithAI);
+router.get('/demo/districts', insightController.getDistrictRiskAssessment);
+router.post('/demo/generate', insightController.generateInsights);
+
 module.exports = router;
